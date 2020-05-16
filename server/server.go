@@ -11,10 +11,9 @@ import (
 func New(statisticsService api.StatisticsServer) http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle(endpoint(newStatisticsServer(statisticsService)))
+
 	return mux
 }
-
-type statisticsServer struct{}
 
 func newStatisticsServer(srv api.StatisticsServer) (string, string, http.HandlerFunc) {
 	return api.NewStatisticsHTTPConverter(srv).GetDashboardWithName(nil)
