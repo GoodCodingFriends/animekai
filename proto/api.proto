@@ -14,8 +14,12 @@ service Statistics {
   }
 }
 
-message GetDashboardRequest {};
+message GetDashboardRequest {
+  // Total number of works per one request.
+  int32 work_total_size = 1;
+};
 
 message GetDashboardResponse {
-  string name = 1;
+  resource.Dashboard dashboard = 1;
+  string work_next_page_token = 2;
 }

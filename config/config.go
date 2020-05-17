@@ -1,6 +1,6 @@
 package config
 
 type Config struct {
-	AnnictToken    string
-	AnnictEndpoint string
+	AnnictToken    string `envconfig:"ANNICT_TOKEN" required:"true"`
+	AnnictEndpoint string `envconfig:"ANNICT_ENDPOINT" required:"true"`
 }

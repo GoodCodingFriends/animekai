@@ -14,7 +14,7 @@ type Service interface {
 	// GetProfile gets the profile of animekai account.
 	GetProfile(ctx context.Context) (*resource.Profile, error)
 	// ListWorks lists watched or watching works.
-	ListWorks(ctx context.Context, limit int) (_ []*resource.Work, cursor string, _ error)
+	ListWorks(ctx context.Context, limit int32) (_ []*resource.Work, cursor string, _ error)
 }
 
 type service struct {
@@ -30,7 +30,7 @@ func New(token, endpoint string) Service {
 }
 
 const getProfileQuery = `
-query () {
+query {
   viewer {
     avatarUrl
     recordsCount
@@ -45,10 +45,10 @@ func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
 	var res struct {
 		Viewer struct {
 			AvatorURL       string
-			RecordsCount    int
-			WannaWatchCount int
-			WatchingCount   int
-			WatchedCount    int
+			RecordsCount    int32
+			WannaWatchCount int32
+			WatchingCount   int32
+			WatchedCount    int32
 		}
 	}
 
@@ -63,10 +63,10 @@ func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
 
 	return &resource.Profile{
 		AvatorUrl:       v.AvatorURL,
-		RecordsCount:    int32(v.RecordsCount),
-		WannaWatchCount: int32(v.WannaWatchCount),
-		WatchingCount:   int32(v.WatchingCount),
-		WatchedCount:    int32(v.WatchedCount),
+		RecordsCount:    v.RecordsCount,
+		WannaWatchCount: v.WannaWatchCount,
+		WatchingCount:   v.WatchingCount,
+		WatchedCount:    v.WatchedCount,
 	}, nil
 }
 
@@ -92,16 +92,16 @@ query ($after: String, $n: Int!) {
 }
 `
 
-func (s *service) ListWorks(ctx context.Context, limit int) ([]*resource.Work, string, error) {
+func (s *service) ListWorks(ctx context.Context, limit int32) ([]*resource.Work, string, error) {
 	type work struct {
 		Cursor string
 		Node   struct {
 			WikipediaURL    string
 			Title           string
-			AnnictID        int
-			SeasonYear      int
+			AnnictID        int32
+			SeasonYear      int32
 			SeasonName      string
-			EpisodesCount   int
+			EpisodesCount   int32
 			ID              string
 			OfficialSiteURL string
 		}
@@ -125,6 +125,10 @@ func (s *service) ListWorks(ctx context.Context, limit int) ([]*resource.Work, s
 	}
 
 	edges := res.Viewer.Works.Edges
+	if len(edges) == 0 {
+		return nil, "", nil
+	}
+
 	works := make([]*resource.Work, 0, len(edges))
 
 	for _, r := range edges {
@@ -134,7 +138,7 @@ func (s *service) ListWorks(ctx context.Context, limit int) ([]*resource.Work, s
 			WorkTitle:       n.Title,
 			ImageUrl:        "",
 			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, n.SeasonName),
-			EpisodesCount:   int32(n.EpisodesCount),
+			EpisodesCount:   n.EpisodesCount,
 			AnnictWorkId:    n.ID,
 			OfficialSiteUrl: n.OfficialSiteURL,
 			WikipediaUrl:    n.WikipediaURL,

@@ -4,6 +4,19 @@ package resource;
 
 option go_package = "github.com/GoodCodingFriends/animekai/resource";
 
+message Profile {
+  // The avator URL of animekai account.
+  string avator_url = 1;
+  // Total number of records.
+  int32 records_count = 2;
+  // Number of works which want to watch.
+  int32 wanna_watch_count = 3;
+  // Number of watching works.
+  int32 watching_count = 4;
+  // Number of watched works.
+  int32 watched_count = 5;
+}
+
 message Work {
   // Work's title.
   string work_title = 1;
@@ -20,4 +33,9 @@ message Work {
   string official_site_url = 6;
   // Wikipedia URL which the work is provided.
   string wikipedia_url = 7;
+}
+
+message Dashboard {
+  Profile profile = 1;
+  repeated Work works = 2;
 }

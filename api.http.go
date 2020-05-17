@@ -11,6 +11,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/golang/protobuf/jsonpb"
@@ -200,29 +201,14 @@ func (h *StatisticsHTTPConverter) GetDashboardHTTPRule(cb func(ctx context.Conte
 
 		arg := &GetDashboardRequest{}
 		contentType := r.Header.Get("Content-Type")
-		if r.Method != http.MethodGet {
-			body, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				cb(ctx, w, r, nil, nil, err)
-				return
-			}
-
-			switch contentType {
-			case "application/protobuf", "application/x-protobuf":
-				if err := proto.Unmarshal(body, arg); err != nil {
+		if r.Method == http.MethodGet {
+			if v := r.URL.Query().Get("work_total_size"); v != "" {
+				i32, err := strconv.ParseInt(v, 10, 32)
+				if err != nil {
 					cb(ctx, w, r, nil, nil, err)
 					return
 				}
-			case "application/json":
-				if err := jsonpb.Unmarshal(bytes.NewBuffer(body), arg); err != nil {
-					cb(ctx, w, r, nil, nil, err)
-					return
-				}
-			default:
-				w.WriteHeader(http.StatusUnsupportedMediaType)
-				_, err := fmt.Fprintf(w, "Unsupported Content-Type: %s", contentType)
-				cb(ctx, w, r, nil, nil, err)
-				return
+				arg.WorkTotalSize = int32(i32)
 			}
 		}
 
