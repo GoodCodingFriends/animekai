@@ -1,15 +1,13 @@
-package record
+package resource
 
-import "time"
-
-// Record represents a work and accompanying information related to animekai.
-type Record struct {
+// Work represents a work.
+type Work struct {
 	// WorkTitle represents the work's title.
 	WorkTitle string
 	// ImageURL represents the image URL for the work.
 	ImageURL string
 	// ReleasedOn represents when the work is released on.
-	ReleasedOn time.Time
+	ReleasedOn string
 	// EpisodesCount represents how number of episodes the work has.
 	EpisodesCount int
 
