@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package api;
 
-import "resource/resource.proto";
+import "resource.proto";
 
 option go_package = "api";
 

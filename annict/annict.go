@@ -89,12 +89,12 @@ func (s *service) ListWorks(ctx context.Context, limit int) ([]*resource.Work, s
 
 		works = append(works, &resource.Work{
 			WorkTitle:       n.Title,
-			ImageURL:        "",
+			ImageUrl:        "",
 			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, n.SeasonName),
-			EpisodesCount:   n.EpisodesCount,
-			AnnictWorkID:    n.ID,
-			OfficialSiteURL: n.OfficialSiteURL,
-			WikipediaURL:    n.WikipediaURL,
+			EpisodesCount:   int32(n.EpisodesCount),
+			AnnictWorkId:    n.ID,
+			OfficialSiteUrl: n.OfficialSiteURL,
+			WikipediaUrl:    n.WikipediaURL,
 		})
 	}
 

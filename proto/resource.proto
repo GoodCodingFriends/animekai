@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resource;
 
-option go_package = "resource";
+option go_package = "github.com/GoodCodingFriends/animekai/resource";
 
 message Work {
   // Work's title.

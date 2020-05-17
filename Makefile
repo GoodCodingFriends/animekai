@@ -4,7 +4,8 @@ TOOLS=$(shell cat tools/tools.go | egrep '^\s_ '  | awk '{ print $$2 }')
 
 .PHONY: proto
 proto:
-	protoc -I api -I $(GOPATH)/src/github.com/protocolbuffers/protobuf/src/ -I $(GOPATH)/src/github.com/googleapis/googleapis --go_out=plugins=grpc:api --gohttp_out=api api/api.proto
+	protoc --go_opt=paths=source_relative -I proto -I $(GOPATH)/src/github.com/protocolbuffers/protobuf/src/ -I $(GOPATH)/src/github.com/googleapis/googleapis --go_out=plugins=grpc:api --gohttp_out=. proto/api.proto
+	protoc --go_opt=paths=source_relative -I proto -I $(GOPATH)/src/github.com/protocolbuffers/protobuf/src/ -I $(GOPATH)/src/github.com/googleapis/googleapis --go_out=resource proto/resource.proto
 
 .PHONY: tools
 tools:

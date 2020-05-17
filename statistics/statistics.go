@@ -3,6 +3,7 @@ package statistics
 import (
 	"context"
 
+	"github.com/GoodCodingFriends/animekai/annict"
 	"github.com/GoodCodingFriends/animekai/api"
 )
 
@@ -12,11 +13,15 @@ type Service interface {
 	GetDashboard(ctx context.Context, req *api.GetDashboardRequest) (*api.GetDashboardResponse, error)
 }
 
-type service struct{}
+type service struct {
+	annict annict.Service
+}
 
 // New instantiates a new Service.
-func New() Service {
-	return &service{}
+func New(annict annict.Service) Service {
+	return &service{
+		annict: annict,
+	}
 }
 
 func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest) (*api.GetDashboardResponse, error) {
