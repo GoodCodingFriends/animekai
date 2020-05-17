@@ -46,8 +46,6 @@ linters:
     - gocognit
     - godot
     - godox
-    - goerr113
     - maligned
     - nestif
     - prealloc
-    - testpackage
