@@ -11,6 +11,8 @@ import (
 )
 
 type Service interface {
+	// GetProfile gets the profile of animekai account.
+	GetProfile(ctx context.Context) (*resource.Profile, error)
 	// ListWorks lists watched or watching works.
 	ListWorks(ctx context.Context, limit int) (_ []*resource.Work, cursor string, _ error)
 }
@@ -25,6 +27,47 @@ func New(token, endpoint string) Service {
 		token:   token,
 		invoker: graphql.NewClient(endpoint).Run,
 	}
+}
+
+const getProfileQuery = `
+query () {
+  viewer {
+    avatarUrl
+    recordsCount
+    wannaWatchCount
+    watchingCount
+    watchedCount
+  }
+}
+`
+
+func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
+	var res struct {
+		Viewer struct {
+			AvatorURL       string
+			RecordsCount    int
+			WannaWatchCount int
+			WatchingCount   int
+			WatchedCount    int
+		}
+	}
+
+	req := graphql.NewRequest(getProfileQuery)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+
+	if err := s.invoker(ctx, req, &res); err != nil {
+		return nil, convertError(err)
+	}
+
+	v := res.Viewer
+
+	return &resource.Profile{
+		AvatorUrl:       v.AvatorURL,
+		RecordsCount:    int32(v.RecordsCount),
+		WannaWatchCount: int32(v.WannaWatchCount),
+		WatchingCount:   int32(v.WatchingCount),
+		WatchedCount:    int32(v.WatchedCount),
+	}, nil
 }
 
 const listWorksQuery = `
