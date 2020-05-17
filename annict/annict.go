@@ -3,6 +3,7 @@ package annict
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/GoodCodingFriends/animekai/errors"
 	"github.com/GoodCodingFriends/animekai/resource"
@@ -16,17 +17,22 @@ type Service interface {
 	// ListWorks lists watched or watching works.
 	// cursor is for paging, empty string if the first page.
 	ListWorks(ctx context.Context, cursor string, limit int32) (_ []*resource.Work, nextCursor string, _ error)
+	// Stop stops the service.
+	Stop(ctx context.Context) error
 }
 
 type service struct {
 	token   string
 	invoker func(context.Context, *graphql.Request, interface{}) error
+
+	ogImageFetcher *ogImageFetcher
 }
 
 func New(token, endpoint string) Service {
 	return &service{
-		token:   token,
-		invoker: graphql.NewClient(endpoint).Run,
+		token:          token,
+		invoker:        graphql.NewClient(endpoint).Run,
+		ogImageFetcher: newOGImageFetcher(),
 	}
 }
 
@@ -131,6 +137,7 @@ func (s *service) ListWorks(ctx context.Context, cursor string, limit int32) ([]
 	}
 
 	works := make([]*resource.Work, 0, len(edges))
+	var wg sync.WaitGroup
 	for _, r := range edges {
 		n := r.Node
 
@@ -142,7 +149,7 @@ func (s *service) ListWorks(ctx context.Context, cursor string, limit int32) ([]
 			status = resource.Work_WATCHED
 		}
 
-		works = append(works, &resource.Work{
+		res := &resource.Work{
 			Title:           n.Title,
 			ImageUrl:        "",
 			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, n.SeasonName),
@@ -151,10 +158,30 @@ func (s *service) ListWorks(ctx context.Context, cursor string, limit int32) ([]
 			OfficialSiteUrl: n.OfficialSiteURL,
 			WikipediaUrl:    n.WikipediaURL,
 			Status:          status,
-		})
+		}
+		works = append(works, res)
+
+		wg.Add(1)
+		doneCh, err := s.ogImageFetcher.process(ctx, n.AnnictID)
+		if err != nil {
+			return nil, "", failure.Wrap(err)
+		}
+		go func() {
+			defer wg.Done()
+			select {
+			case <-ctx.Done():
+				return
+			case res.ImageUrl = <-doneCh:
+			}
+		}()
 	}
+	wg.Wait()
 
 	return works, edges[len(edges)-1].Cursor, nil
+}
+
+func (s *service) Stop(ctx context.Context) error {
+	return s.ogImageFetcher.stop(ctx)
 }
 
 func convertError(err error) error {

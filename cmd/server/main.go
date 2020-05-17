@@ -1,10 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/GoodCodingFriends/animekai/annict"
 	"github.com/GoodCodingFriends/animekai/config"
@@ -39,8 +40,21 @@ func realMain() error {
 		}
 	}()
 
-	handler := server.New(logger, statistics.New(annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)))
-	log.Printf("server listen in :8080")
-	srv := &http.Server{Addr: ":8080", Handler: handler}
+	annictService := annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+		if err := annictService.Stop(ctx); err != nil {
+			logger.Error("failed to stop annict service", zap.Error(err))
+		}
+	}()
+
+	handler := server.New(
+		logger,
+		statistics.New(annictService),
+		cfg.Env == "dev",
+	)
+	logger.Info("server listen in :8000")
+	srv := &http.Server{Addr: ":8000", Handler: handler}
 	return srv.ListenAndServe()
 }

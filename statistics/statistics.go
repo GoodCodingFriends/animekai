@@ -47,7 +47,7 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 		return nil
 	})
 	eg.Go(func() error {
-		w, cursor, err := s.annict.ListWorks(ctx, "", req.WorkTotalSize)
+		w, cursor, err := s.annict.ListWorks(ctx, "", req.WorkPageSize)
 		if err != nil {
 			return failure.Wrap(err)
 		}
