@@ -51,4 +51,3 @@ linters:
     - nestif
     - prealloc
     - testpackage
-    - wsl
