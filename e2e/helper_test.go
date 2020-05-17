@@ -30,7 +30,7 @@ func newClientAndRunServer(t *testing.T) *client {
 	cfg.AnnictEndpoint = annictEndpoint
 
 	handler := server.New(zap.NewNop(), statistics.New(annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)))
-	srv := &http.Server{Addr: "localhost:8080", Handler: handler}
+	srv := &http.Server{Addr: "127.0.0.1:8080", Handler: handler}
 	go func() {
 		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 			t.Errorf("srv.ListenAndServe returns unexpected error: %s", err)
