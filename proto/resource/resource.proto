@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package resource;
+
+option go_package = "resource";
+
+message Work {
+  // Work's title.
+  string work_title = 1;
+  // Image URL for the work.
+  string image_url = 2;
+  // When the work is released on.
+  string released_on = 3;
+  // How number of episodes the work has.
+  int32 episodes_count = 4;
+
+  // ID of the work on Annict.
+  string annict_work_id = 5;
+  // URL which the work is provided.
+  string official_site_url = 6;
+  // Wikipedia URL which the work is provided.
+  string wikipedia_url = 7;
+}
