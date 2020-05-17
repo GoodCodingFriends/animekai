@@ -8,6 +8,7 @@ import (
 	"github.com/GoodCodingFriends/animekai/api"
 )
 
+// New returns a handler for statistics server.
 func New(statisticsService api.StatisticsServer) http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle(endpoint(newStatisticsServer(statisticsService)))
