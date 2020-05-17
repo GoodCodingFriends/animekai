@@ -13,7 +13,8 @@
               "episodesCount": 24,
               "id": "V29yay02MzM2",
               "officialSiteUrl": "https://www.ntv.co.jp/chihayafuru/",
-              "wikipediaUrl": "https://ja.wikipedia.org/wiki/ちはやふる"
+              "wikipediaUrl": "https://ja.wikipedia.org/wiki/ちはやふる",
+              "viewerStatusState": "WATCHED"
             }
           },
           {
@@ -26,7 +27,8 @@
               "episodesCount": 12,
               "id": "V29yay02NTg3",
               "officialSiteUrl": "https://sao-alicization.net",
-              "wikipediaUrl": "https://ja.wikipedia.org/wiki/ソードアート・オンライン"
+              "wikipediaUrl": "https://ja.wikipedia.org/wiki/ソードアート・オンライン",
+              "viewerStatusState": "WATCHED"
             }
           },
           {
@@ -39,7 +41,8 @@
               "episodesCount": 0,
               "id": "V29yay02NDE3",
               "officialSiteUrl": "https://www.tenkinoko.com/",
-              "wikipediaUrl": "https://ja.wikipedia.org/wiki/天気の子"
+              "wikipediaUrl": "https://ja.wikipedia.org/wiki/天気の子",
+              "viewerStatusState": "WATCHED"
             }
           },
           {
@@ -52,7 +55,8 @@
               "episodesCount": 12,
               "id": "V29yay02NDYz",
               "officialSiteUrl": "https://dumbbell-anime.jp/",
-              "wikipediaUrl": "https://ja.wikipedia.org/wiki/ダンベル何キロ持てる%3F"
+              "wikipediaUrl": "https://ja.wikipedia.org/wiki/ダンベル何キロ持てる%3F",
+              "viewerStatusState": "WATCHING"
             }
           },
           {
@@ -65,7 +69,8 @@
               "episodesCount": 0,
               "id": "V29yay01MzQw",
               "officialSiteUrl": "http://anime-eupho.com/",
-              "wikipediaUrl": "https://ja.wikipedia.org/wiki/%E9%9F%BF%E3%81%91!_%E3%83%A6%E3%83%BC%E3%83%95%E3%82%A9%E3%83%8B%E3%82%A2%E3%83%A0"
+              "wikipediaUrl": "https://ja.wikipedia.org/wiki/%E9%9F%BF%E3%81%91!_%E3%83%A6%E3%83%BC%E3%83%95%E3%82%A9%E3%83%8B%E3%82%A2%E3%83%A0",
+              "viewerStatusState": "WATCHED"
             }
           }
         ]

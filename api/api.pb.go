@@ -134,6 +134,116 @@ func (x *GetDashboardResponse) GetWorkNextPageToken() string {
 	return ""
 }
 
+type ListWorksRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PageSize  int32  `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	PageToken string `protobuf:"bytes,2,opt,name=page_token,json=pageToken,proto3" json:"page_token,omitempty"`
+}
+
+func (x *ListWorksRequest) Reset() {
+	*x = ListWorksRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListWorksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorksRequest) ProtoMessage() {}
+
+func (x *ListWorksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorksRequest.ProtoReflect.Descriptor instead.
+func (*ListWorksRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ListWorksRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListWorksRequest) GetPageToken() string {
+	if x != nil {
+		return x.PageToken
+	}
+	return ""
+}
+
+type ListWorksResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Works         []*resource.Work `protobuf:"bytes,1,rep,name=works,proto3" json:"works,omitempty"`
+	NextPageToken string           `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
+}
+
+func (x *ListWorksResponse) Reset() {
+	*x = ListWorksResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListWorksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListWorksResponse) ProtoMessage() {}
+
+func (x *ListWorksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListWorksResponse.ProtoReflect.Descriptor instead.
+func (*ListWorksResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ListWorksResponse) GetWorks() []*resource.Work {
+	if x != nil {
+		return x.Works
+	}
+	return nil
+}
+
+func (x *ListWorksResponse) GetNextPageToken() string {
+	if x != nil {
+		return x.NextPageToken
+	}
+	return ""
+}
+
 var File_api_proto protoreflect.FileDescriptor
 
 var file_api_proto_rawDesc = []byte{
@@ -152,13 +262,29 @@ var file_api_proto_rawDesc = []byte{
 	0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x12, 0x2f, 0x0a, 0x14, 0x77, 0x6f, 0x72, 0x6b,
 	0x5f, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x11, 0x77, 0x6f, 0x72, 0x6b, 0x4e, 0x65, 0x78, 0x74,
-	0x50, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x32, 0x65, 0x0a, 0x0a, 0x53, 0x74, 0x61,
-	0x74, 0x69, 0x73, 0x74, 0x69, 0x63, 0x73, 0x12, 0x57, 0x0a, 0x0c, 0x47, 0x65, 0x74, 0x44, 0x61,
-	0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x12, 0x18, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65,
-	0x74, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x19, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x61, 0x73, 0x68, 0x62,
-	0x6f, 0x61, 0x72, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x12, 0x82, 0xd3,
-	0xe4, 0x93, 0x02, 0x0c, 0x12, 0x0a, 0x2f, 0x64, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64,
+	0x50, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x4e, 0x0a, 0x10, 0x4c, 0x69, 0x73,
+	0x74, 0x57, 0x6f, 0x72, 0x6b, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a,
+	0x09, 0x70, 0x61, 0x67, 0x65, 0x5f, 0x73, 0x69, 0x7a, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05,
+	0x52, 0x08, 0x70, 0x61, 0x67, 0x65, 0x53, 0x69, 0x7a, 0x65, 0x12, 0x1d, 0x0a, 0x0a, 0x70, 0x61,
+	0x67, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
+	0x70, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x61, 0x0a, 0x11, 0x4c, 0x69, 0x73,
+	0x74, 0x57, 0x6f, 0x72, 0x6b, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x24,
+	0x0a, 0x05, 0x77, 0x6f, 0x72, 0x6b, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0e, 0x2e,
+	0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x2e, 0x57, 0x6f, 0x72, 0x6b, 0x52, 0x05, 0x77,
+	0x6f, 0x72, 0x6b, 0x73, 0x12, 0x26, 0x0a, 0x0f, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70, 0x61, 0x67,
+	0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x6e,
+	0x65, 0x78, 0x74, 0x50, 0x61, 0x67, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x32, 0xb1, 0x01, 0x0a,
+	0x0a, 0x53, 0x74, 0x61, 0x74, 0x69, 0x73, 0x74, 0x69, 0x63, 0x73, 0x12, 0x57, 0x0a, 0x0c, 0x47,
+	0x65, 0x74, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x12, 0x18, 0x2e, 0x61, 0x70,
+	0x69, 0x2e, 0x47, 0x65, 0x74, 0x44, 0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x19, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x47, 0x65, 0x74, 0x44,
+	0x61, 0x73, 0x68, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x12, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x0c, 0x12, 0x0a, 0x2f, 0x64, 0x61, 0x73, 0x68, 0x62,
+	0x6f, 0x61, 0x72, 0x64, 0x12, 0x4a, 0x0a, 0x09, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x6f, 0x72, 0x6b,
+	0x73, 0x12, 0x15, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x57, 0x6f, 0x72, 0x6b,
+	0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x57, 0x6f, 0x72, 0x6b, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x22, 0x0e, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x08, 0x12, 0x06, 0x2f, 0x77, 0x6f, 0x72, 0x6b, 0x73,
 	0x42, 0x05, 0x5a, 0x03, 0x61, 0x70, 0x69, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
@@ -174,21 +300,27 @@ func file_api_proto_rawDescGZIP() []byte {
 	return file_api_proto_rawDescData
 }
 
-var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_api_proto_goTypes = []interface{}{
 	(*GetDashboardRequest)(nil),  // 0: api.GetDashboardRequest
 	(*GetDashboardResponse)(nil), // 1: api.GetDashboardResponse
-	(*resource.Dashboard)(nil),   // 2: resource.Dashboard
+	(*ListWorksRequest)(nil),     // 2: api.ListWorksRequest
+	(*ListWorksResponse)(nil),    // 3: api.ListWorksResponse
+	(*resource.Dashboard)(nil),   // 4: resource.Dashboard
+	(*resource.Work)(nil),        // 5: resource.Work
 }
 var file_api_proto_depIdxs = []int32{
-	2, // 0: api.GetDashboardResponse.dashboard:type_name -> resource.Dashboard
-	0, // 1: api.Statistics.GetDashboard:input_type -> api.GetDashboardRequest
-	1, // 2: api.Statistics.GetDashboard:output_type -> api.GetDashboardResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: api.GetDashboardResponse.dashboard:type_name -> resource.Dashboard
+	5, // 1: api.ListWorksResponse.works:type_name -> resource.Work
+	0, // 2: api.Statistics.GetDashboard:input_type -> api.GetDashboardRequest
+	2, // 3: api.Statistics.ListWorks:input_type -> api.ListWorksRequest
+	1, // 4: api.Statistics.GetDashboard:output_type -> api.GetDashboardResponse
+	3, // 5: api.Statistics.ListWorks:output_type -> api.ListWorksResponse
+	4, // [4:6] is the sub-list for method output_type
+	2, // [2:4] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_init() }
@@ -221,6 +353,30 @@ func file_api_proto_init() {
 				return nil
 			}
 		}
+		file_api_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListWorksRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListWorksResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -228,7 +384,7 @@ func file_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -255,6 +411,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type StatisticsClient interface {
 	GetDashboard(ctx context.Context, in *GetDashboardRequest, opts ...grpc.CallOption) (*GetDashboardResponse, error)
+	ListWorks(ctx context.Context, in *ListWorksRequest, opts ...grpc.CallOption) (*ListWorksResponse, error)
 }
 
 type statisticsClient struct {
@@ -274,9 +431,19 @@ func (c *statisticsClient) GetDashboard(ctx context.Context, in *GetDashboardReq
 	return out, nil
 }
 
+func (c *statisticsClient) ListWorks(ctx context.Context, in *ListWorksRequest, opts ...grpc.CallOption) (*ListWorksResponse, error) {
+	out := new(ListWorksResponse)
+	err := c.cc.Invoke(ctx, "/api.Statistics/ListWorks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StatisticsServer is the server API for Statistics service.
 type StatisticsServer interface {
 	GetDashboard(context.Context, *GetDashboardRequest) (*GetDashboardResponse, error)
+	ListWorks(context.Context, *ListWorksRequest) (*ListWorksResponse, error)
 }
 
 // UnimplementedStatisticsServer can be embedded to have forward compatible implementations.
@@ -285,6 +452,9 @@ type UnimplementedStatisticsServer struct {
 
 func (*UnimplementedStatisticsServer) GetDashboard(context.Context, *GetDashboardRequest) (*GetDashboardResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDashboard not implemented")
+}
+func (*UnimplementedStatisticsServer) ListWorks(context.Context, *ListWorksRequest) (*ListWorksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWorks not implemented")
 }
 
 func RegisterStatisticsServer(s *grpc.Server, srv StatisticsServer) {
@@ -309,6 +479,24 @@ func _Statistics_GetDashboard_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Statistics_ListWorks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWorksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatisticsServer).ListWorks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.Statistics/ListWorks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatisticsServer).ListWorks(ctx, req.(*ListWorksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Statistics_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "api.Statistics",
 	HandlerType: (*StatisticsServer)(nil),
@@ -316,6 +504,10 @@ var _Statistics_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDashboard",
 			Handler:    _Statistics_GetDashboard_Handler,
+		},
+		{
+			MethodName: "ListWorks",
+			Handler:    _Statistics_ListWorks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

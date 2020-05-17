@@ -3,14 +3,10 @@ package annict
 import (
 	"context"
 	stderr "errors"
-	"io"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/GoodCodingFriends/animekai/errors"
+	"github.com/GoodCodingFriends/animekai/testutil"
 	"github.com/machinebox/graphql"
 	"github.com/morikuni/failure"
 )
@@ -39,7 +35,7 @@ func TestGetProfile(t *testing.T) {
 		c := c
 
 		t.Run(name, func(t *testing.T) {
-			addr := runServer(t, "get_profile_response")
+			addr := testutil.RunAnnictServer(t)
 
 			svc := New("token", addr)
 			if c.GraphQLErr != nil {
@@ -91,7 +87,7 @@ func TestListWorks(t *testing.T) {
 		c := c
 
 		t.Run(name, func(t *testing.T) {
-			addr := runServer(t, "list_works_response")
+			addr := testutil.RunAnnictServer(t)
 
 			svc := New("token", addr)
 			if c.GraphQLErr != nil {
@@ -99,7 +95,7 @@ func TestListWorks(t *testing.T) {
 					return c.GraphQLErr
 				}
 			}
-			works, cursor, err := svc.ListWorks(context.Background(), 5)
+			works, cursor, err := svc.ListWorks(context.Background(), "", 5)
 			if c.GraphQLErr == nil {
 				if err != nil {
 					t.Fatal(err)
@@ -120,22 +116,4 @@ func TestListWorks(t *testing.T) {
 			}
 		})
 	}
-}
-
-func runServer(t *testing.T, fname string) (addr string) {
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		f, err := os.Open(filepath.Join("testdata", fname))
-		if err != nil {
-			t.Error(err)
-			return
-		}
-		defer f.Close()
-
-		if _, err := io.Copy(w, f); err != nil {
-			t.Error(err)
-			return
-		}
-	}))
-	t.Cleanup(srv.Close)
-	return srv.URL
 }

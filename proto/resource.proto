@@ -19,7 +19,7 @@ message Profile {
 
 message Work {
   // Work's title.
-  string work_title = 1;
+  string title = 1;
   // Image URL for the work.
   string image_url = 2;
   // When the work is released on.
@@ -33,6 +33,15 @@ message Work {
   string official_site_url = 6;
   // Wikipedia URL which the work is provided.
   string wikipedia_url = 7;
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    WATCHING = 1;
+    WATCHED = 2;
+  }
+
+  // Status which indicates that the work is watched/watching.
+  Status status = 8;
 }
 
 message Dashboard {

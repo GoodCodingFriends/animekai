@@ -42,7 +42,6 @@ linters:
     - varcheck
     - whitespace
     - asciicheck
-    - gochecknoglobals
     - gocognit
     - godot
     - godox

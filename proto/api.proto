@@ -12,6 +12,9 @@ service Statistics {
   rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse) {
     option (google.api.http).get = "/dashboard";
   }
+  rpc ListWorks(ListWorksRequest) returns (ListWorksResponse) {
+    option (google.api.http).get = "/works";
+  }
 }
 
 message GetDashboardRequest {
@@ -22,4 +25,14 @@ message GetDashboardRequest {
 message GetDashboardResponse {
   resource.Dashboard dashboard = 1;
   string work_next_page_token = 2;
+}
+
+message ListWorksRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListWorksResponse {
+  repeated resource.Work works = 1;
+  string next_page_token = 2;
 }

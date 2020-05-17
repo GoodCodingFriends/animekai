@@ -14,7 +14,8 @@ type Service interface {
 	// GetProfile gets the profile of animekai account.
 	GetProfile(ctx context.Context) (*resource.Profile, error)
 	// ListWorks lists watched or watching works.
-	ListWorks(ctx context.Context, limit int32) (_ []*resource.Work, cursor string, _ error)
+	// cursor is for paging, empty string if the first page.
+	ListWorks(ctx context.Context, cursor string, limit int32) (_ []*resource.Work, nextCursor string, _ error)
 }
 
 type service struct {
@@ -30,7 +31,7 @@ func New(token, endpoint string) Service {
 }
 
 const getProfileQuery = `
-query {
+query GetProfile {
   viewer {
     avatarUrl
     recordsCount
@@ -71,7 +72,7 @@ func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
 }
 
 const listWorksQuery = `
-query ($after: String, $n: Int!) {
+query ListWorks($after: String, $n: Int!) {
   viewer {
     works(after: $after, first: $n, orderBy: {direction: DESC, field: SEASON}) {
       edges {
@@ -85,6 +86,7 @@ query ($after: String, $n: Int!) {
           id
           officialSiteUrl
           wikipediaUrl
+          viewerStatusState
         }
       }
     }
@@ -92,31 +94,30 @@ query ($after: String, $n: Int!) {
 }
 `
 
-func (s *service) ListWorks(ctx context.Context, limit int32) ([]*resource.Work, string, error) {
+func (s *service) ListWorks(ctx context.Context, cursor string, limit int32) ([]*resource.Work, string, error) {
 	type work struct {
 		Cursor string
 		Node   struct {
-			WikipediaURL    string
-			Title           string
-			AnnictID        int32
-			SeasonYear      int32
-			SeasonName      string
-			EpisodesCount   int32
-			ID              string
-			OfficialSiteURL string
+			WikipediaURL      string
+			Title             string
+			AnnictID          int32
+			SeasonYear        int32
+			SeasonName        string
+			EpisodesCount     int32
+			ID                string
+			OfficialSiteURL   string
+			ViewerStatusState string
 		}
 	}
 
 	var res struct {
-		Viewer struct {
-			Works struct {
-				Edges []work
-			}
-		}
+		Viewer struct{ Works struct{ Edges []work } }
 	}
 
 	req := graphql.NewRequest(listWorksQuery)
-	req.Var("after", nil)
+	if cursor != "" {
+		req.Var("after", nil)
+	}
 	req.Var("n", limit)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
 
@@ -130,18 +131,26 @@ func (s *service) ListWorks(ctx context.Context, limit int32) ([]*resource.Work,
 	}
 
 	works := make([]*resource.Work, 0, len(edges))
-
 	for _, r := range edges {
 		n := r.Node
 
+		var status resource.Work_Status
+		switch n.ViewerStatusState {
+		case "WATCHING":
+			status = resource.Work_WATCHING
+		case "WATCHED":
+			status = resource.Work_WATCHED
+		}
+
 		works = append(works, &resource.Work{
-			WorkTitle:       n.Title,
+			Title:           n.Title,
 			ImageUrl:        "",
 			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, n.SeasonName),
 			EpisodesCount:   n.EpisodesCount,
 			AnnictWorkId:    n.ID,
 			OfficialSiteUrl: n.OfficialSiteURL,
 			WikipediaUrl:    n.WikipediaURL,
+			Status:          status,
 		})
 	}
 

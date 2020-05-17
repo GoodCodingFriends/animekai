@@ -14,6 +14,8 @@ import (
 type Service interface {
 	// GetDashboard returns stuffs for displaying animekai dashboard.
 	GetDashboard(ctx context.Context, req *api.GetDashboardRequest) (*api.GetDashboardResponse, error)
+	// ListWorks returns watching/watched works according to req.
+	ListWorks(ctx context.Context, req *api.ListWorksRequest) (*api.ListWorksResponse, error)
 }
 
 type service struct {
@@ -45,7 +47,7 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 		return nil
 	})
 	eg.Go(func() error {
-		w, cursor, err := s.annict.ListWorks(ctx, req.WorkTotalSize)
+		w, cursor, err := s.annict.ListWorks(ctx, "", req.WorkTotalSize)
 		if err != nil {
 			return failure.Wrap(err)
 		}
@@ -63,5 +65,16 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 			Works:   works,
 		},
 		WorkNextPageToken: nextPageToken,
+	}, nil
+}
+
+func (s *service) ListWorks(ctx context.Context, req *api.ListWorksRequest) (*api.ListWorksResponse, error) {
+	works, nextPageToken, err := s.annict.ListWorks(ctx, req.PageToken, req.PageSize)
+	if err != nil {
+		return nil, failure.Wrap(err)
+	}
+	return &api.ListWorksResponse{
+		Works:         works,
+		NextPageToken: nextPageToken,
 	}, nil
 }

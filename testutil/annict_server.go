@@ -1,0 +1,64 @@
+package testutil
+
+import (
+	"bytes"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+var root string
+
+// RunAnnictServer runs a dummy Annict server for testing and returns the server address.
+func RunAnnictServer(t *testing.T) (addr string) {
+	var buf bytes.Buffer
+	cmd := exec.Command("git", "rev-parse", "--show-cdup")
+	cmd.Stdout = &buf
+	if err := cmd.Run(); err != nil {
+		t.Fatal(err)
+	}
+	root = strings.TrimSpace(buf.String())
+
+	h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			t.Error(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		s := string(b)
+
+		switch {
+		case strings.Contains(s, "GetProfile"):
+			copyFile(t, w, "get_profile_response")
+		case strings.Contains(s, "ListWorks"):
+			copyFile(t, w, "list_works_response")
+		default:
+			t.Error("unknown query")
+		}
+	})
+
+	srv := httptest.NewServer(h)
+	t.Cleanup(srv.Close)
+	return srv.URL
+}
+
+func copyFile(t *testing.T, w io.Writer, fname string) {
+	f, err := os.Open(filepath.Join(root, "testutil", "testdata", fname))
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	defer f.Close()
+
+	if _, err := io.Copy(w, f); err != nil {
+		t.Error(err)
+		return
+	}
+}

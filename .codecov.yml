@@ -29,5 +29,6 @@ comment:
 
 ignore:
   - cmd
+  - testutil
   - */**/pb.go
   - */**/*.http.go

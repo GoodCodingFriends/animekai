@@ -33,9 +33,14 @@ func realMain() error {
 	if err != nil {
 		return failure.Translate(err, errors.Internal)
 	}
-	defer logger.Sync()
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			logger.Error("failed to sync", zap.Error(err))
+		}
+	}()
 
-	srv := server.New(logger, statistics.New(annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)))
+	handler := server.New(logger, statistics.New(annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)))
 	log.Printf("server listen in :8080")
-	return http.ListenAndServe(":8080", srv)
+	srv := &http.Server{Addr: ":8080", Handler: handler}
+	return srv.ListenAndServe()
 }
