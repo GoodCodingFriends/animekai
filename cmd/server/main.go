@@ -12,7 +12,9 @@ import (
 	"github.com/GoodCodingFriends/animekai/errors"
 	"github.com/GoodCodingFriends/animekai/server"
 	"github.com/GoodCodingFriends/animekai/statistics"
+	"github.com/GoodCodingFriends/animekai/testutil"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/mitchellh/go-testing-interface"
 	"github.com/morikuni/failure"
 	"go.uber.org/zap"
 )
@@ -40,6 +42,11 @@ func realMain() error {
 		}
 	}()
 
+	if cfg.Env.IsDev() {
+		cfg.AnnictEndpoint = testutil.RunAnnictServer(&testing.RuntimeT{})
+		logger.Info("dummy Annict server is enabled", zap.String("addr", cfg.AnnictEndpoint))
+	}
+
 	annictService := annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)
 	defer func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
@@ -52,7 +59,7 @@ func realMain() error {
 	handler := server.New(
 		logger,
 		statistics.New(annictService),
-		cfg.Env == "dev",
+		cfg.Env.IsDev(),
 	)
 	logger.Info("server listen in :8000")
 	srv := &http.Server{Addr: ":8000", Handler: handler}

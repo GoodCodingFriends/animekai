@@ -166,14 +166,14 @@ func (s *service) ListWorks(ctx context.Context, cursor string, limit int32) ([]
 		if err != nil {
 			return nil, "", failure.Wrap(err)
 		}
-		go func() {
+		go func(res *resource.Work) {
 			defer wg.Done()
 			select {
 			case <-ctx.Done():
 				return
 			case res.ImageUrl = <-doneCh:
 			}
-		}()
+		}(res)
 	}
 	wg.Wait()
 

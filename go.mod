@@ -12,6 +12,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/machinebox/graphql v0.2.2
 	github.com/matryer/is v1.3.0 // indirect
+	github.com/mitchellh/go-testing-interface v1.14.1
 	github.com/morikuni/failure v0.12.1
 	github.com/nametake/protoc-gen-gohttp v1.0.0
 	github.com/rs/cors v1.7.0

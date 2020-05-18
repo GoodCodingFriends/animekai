@@ -10,13 +10,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"testing"
+
+	testing "github.com/mitchellh/go-testing-interface"
 )
 
 var root string
 
 // RunAnnictServer runs a dummy Annict server for testing and returns the server address.
-func RunAnnictServer(t *testing.T) (addr string) {
+func RunAnnictServer(t testing.T) (addr string) {
 	var buf bytes.Buffer
 	cmd := exec.Command("git", "rev-parse", "--show-cdup")
 	cmd.Stdout = &buf
@@ -49,7 +50,7 @@ func RunAnnictServer(t *testing.T) (addr string) {
 	return srv.URL
 }
 
-func copyFile(t *testing.T, w io.Writer, fname string) {
+func copyFile(t testing.T, w io.Writer, fname string) {
 	f, err := os.Open(filepath.Join(root, "testutil", "testdata", fname))
 	if err != nil {
 		t.Error(err)
