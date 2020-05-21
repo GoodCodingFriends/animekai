@@ -48,6 +48,13 @@ query GetProfile {
 }
 `
 
+var seasonToKanji = map[string]string{
+	"SPRING": "春",
+	"SUMMER": "夏",
+	"AUTUMN": "秋",
+	"WINTER": "冬",
+}
+
 func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
 	var res struct {
 		Viewer struct {
@@ -152,7 +159,7 @@ func (s *service) ListWorks(ctx context.Context, cursor string, limit int32) ([]
 		res := &resource.Work{
 			Title:           n.Title,
 			ImageUrl:        "",
-			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, n.SeasonName),
+			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, seasonToKanji[n.SeasonName]),
 			EpisodesCount:   n.EpisodesCount,
 			AnnictWorkId:    n.ID,
 			OfficialSiteUrl: n.OfficialSiteURL,
