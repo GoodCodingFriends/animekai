@@ -40,6 +40,8 @@ func RunAnnictServer(t testing.T) (addr string) {
 			copyFile(t, w, "get_profile_response")
 		case strings.Contains(s, "ListWorks"):
 			copyFile(t, w, "list_works_response")
+		case strings.Contains(s, "listRecords"):
+			copyFile(t, w, "list_records_response")
 		default:
 			t.Error("unknown query")
 		}

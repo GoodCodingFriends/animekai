@@ -1,0 +1,43 @@
+{
+  "data": {
+    "viewer": {
+      "records": {
+        "edges": [
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である"
+              },
+              "episode": {
+                "sortNumber": 10
+              },
+              "createdAt": "2020-05-19T16:49:01Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である"
+              },
+              "episode": {
+                "sortNumber": 20
+              },
+              "createdAt": "2020-05-19T16:49:50Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！"
+              },
+              "episode": {
+                "sortNumber": 1
+              },
+              "createdAt": "2020-05-23T07:35:14Z"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

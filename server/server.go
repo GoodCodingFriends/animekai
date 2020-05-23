@@ -17,13 +17,19 @@ import (
 )
 
 // New returns a handler for statistics server.
-func New(logger *zap.Logger, statisticsService api.StatisticsServer, enableCORS bool) http.Handler {
+func New(
+	logger *zap.Logger,
+	statisticsService api.StatisticsServer,
+	slackService http.Handler,
+	enableCORS bool,
+) http.Handler {
 	ints := interceptors(logger)
 
 	srv := newStatisticsServer(statisticsService)
 	mux := http.NewServeMux()
 	mux.Handle(endpoint(srv.GetDashboardWithName(appendGRPCStatusToHeader, ints...)))
 	mux.Handle(endpoint(srv.ListWorksWithName(appendGRPCStatusToHeader, ints...)))
+	mux.Handle("/slack", slackService)
 
 	if enableCORS {
 		logger.Info("enable CORS")

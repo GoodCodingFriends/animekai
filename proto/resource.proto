@@ -21,7 +21,7 @@ message Profile {
 
 message Work {
   // Work's identifier.
-  string id = 1;
+  int32 id = 1;
   // Work's title.
   string title = 2;
   // Image URL for the work.

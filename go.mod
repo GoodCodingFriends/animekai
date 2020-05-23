@@ -15,7 +15,9 @@ require (
 	github.com/mitchellh/go-testing-interface v1.14.1
 	github.com/morikuni/failure v0.12.1
 	github.com/nametake/protoc-gen-gohttp v1.0.0
+	github.com/nlopes/slack v0.6.0
 	github.com/rs/cors v1.7.0
+	github.com/slack-go/slack v0.6.4
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/zap v1.15.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect

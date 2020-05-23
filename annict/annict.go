@@ -31,6 +31,9 @@ type Service interface {
 	// ListWorks lists watched or watching works.
 	// cursor is for paging, empty string if the first page.
 	ListWorks(ctx context.Context, state WorkState, cursor string, limit int32) (_ []*resource.Work, nextCursor string, _ error)
+
+	CreateNextEpisodeRecord(ctx context.Context)
+
 	// Stop stops the service.
 	Stop(ctx context.Context) error
 }
@@ -131,7 +134,6 @@ func (s *service) ListWorks(ctx context.Context, state WorkState, cursor string,
 			SeasonYear        int32
 			SeasonName        string
 			EpisodesCount     int32
-			ID                string
 			OfficialSiteURL   string
 			ViewerStatusState string
 		}
@@ -189,7 +191,7 @@ func (s *service) ListWorks(ctx context.Context, state WorkState, cursor string,
 		}
 
 		res := &resource.Work{
-			Id:              n.ID,
+			Id:              n.AnnictID,
 			Title:           n.Title,
 			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, seasonToKanji[n.SeasonName]),
 			EpisodesCount:   n.EpisodesCount,
@@ -248,7 +250,7 @@ func (s *service) ListWorks(ctx context.Context, state WorkState, cursor string,
 }
 
 const listRecordsQuery = `
-query {
+query listRecords {
   viewer {
     records {
       edges {
