@@ -32,7 +32,8 @@ func New(annict annict.Service) Service {
 func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest) (*api.GetDashboardResponse, error) {
 	var (
 		profile       *resource.Profile
-		works         []*resource.Work
+		watchingWorks []*resource.Work
+		watchedWorks  []*resource.Work
 		nextPageToken string
 
 		eg errgroup.Group
@@ -47,11 +48,19 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 		return nil
 	})
 	eg.Go(func() error {
-		w, cursor, err := s.annict.ListWorks(ctx, "", req.WorkPageSize)
+		w, _, err := s.annict.ListWorks(ctx, annict.WorkStateWatching, "", 100)
 		if err != nil {
 			return failure.Wrap(err)
 		}
-		works = w
+		watchingWorks = w
+		return nil
+	})
+	eg.Go(func() error {
+		w, cursor, err := s.annict.ListWorks(ctx, annict.WorkStateWatched, "", req.WorkPageSize)
+		if err != nil {
+			return failure.Wrap(err)
+		}
+		watchedWorks = w
 		nextPageToken = cursor
 		return nil
 	})
@@ -61,15 +70,25 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 
 	return &api.GetDashboardResponse{
 		Dashboard: &resource.Dashboard{
-			Profile: profile,
-			Works:   works,
+			Profile:       profile,
+			WatchingWorks: watchingWorks,
+			WatchedWorks:  watchedWorks,
 		},
 		WorkNextPageToken: nextPageToken,
 	}, nil
 }
 
 func (s *service) ListWorks(ctx context.Context, req *api.ListWorksRequest) (*api.ListWorksResponse, error) {
-	works, nextPageToken, err := s.annict.ListWorks(ctx, req.PageToken, req.PageSize)
+	var state annict.WorkState
+	switch req.State {
+	case api.WorkState_WATCHING:
+		state = "WATCHING"
+	case api.WorkState_WATCHED:
+		state = "WATCHED"
+	default:
+		state = "NO_STATE"
+	}
+	works, nextPageToken, err := s.annict.ListWorks(ctx, state, req.PageToken, req.PageSize)
 	if err != nil {
 		return nil, failure.Wrap(err)
 	}

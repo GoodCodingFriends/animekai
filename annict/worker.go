@@ -16,7 +16,7 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
-const maxWorkers = 5
+const maxWorkers = 10
 
 type ogImageFetcher struct {
 	sem    *semaphore.Weighted

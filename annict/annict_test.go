@@ -3,6 +3,7 @@ package annict
 import (
 	"context"
 	stderr "errors"
+	"os"
 	"testing"
 
 	"github.com/GoodCodingFriends/animekai/errors"
@@ -95,7 +96,7 @@ func TestListWorks(t *testing.T) {
 					return c.GraphQLErr
 				}
 			}
-			works, cursor, err := svc.ListWorks(context.Background(), "", 5)
+			works, cursor, err := svc.ListWorks(context.Background(), WorkStateAll, "", 5)
 			if c.GraphQLErr == nil {
 				if err != nil {
 					t.Fatal(err)
@@ -115,5 +116,13 @@ func TestListWorks(t *testing.T) {
 				t.Errorf("expected code '%s', but got '%s'", c.wantCode, err)
 			}
 		})
+	}
+}
+
+func Test_listRecords(t *testing.T) {
+	svc := New(os.Getenv("ANNICT_TOKEN"), os.Getenv("ANNICT_ENDPOINT"))
+	_, err := svc.(*service).listRecords(context.Background())
+	if err != nil {
+		t.Fatal(err)
 	}
 }

@@ -6,7 +6,6 @@ import "resource.proto";
 
 option go_package = "api";
 
-import "google/api/annotations.proto";
 
 service Statistics {
   rpc GetDashboard(GetDashboardRequest) returns (GetDashboardResponse) {}
@@ -24,11 +23,18 @@ message GetDashboardResponse {
 }
 
 message ListWorksRequest {
-  int32 page_size = 1;
-  string page_token = 2;
+  WorkState state = 1;
+  int32 page_size = 2;
+  string page_token = 3;
 }
 
 message ListWorksResponse {
   repeated resource.Work works = 1;
   string next_page_token = 2;
+}
+
+enum WorkState {
+  WORK_STATE_UNSPECIFIED = 0;
+  WATCHING = 1;
+  WATCHED = 2;
 }

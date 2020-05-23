@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package resource;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/GoodCodingFriends/animekai/resource";
 
 message Profile {
@@ -18,21 +20,26 @@ message Profile {
 }
 
 message Work {
+  // Work's identifier.
+  string id = 1;
   // Work's title.
-  string title = 1;
+  string title = 2;
   // Image URL for the work.
-  string image_url = 2;
+  string image_url = 3;
   // When the work is released on.
-  string released_on = 3;
+  string released_on = 4;
   // How number of episodes the work has.
-  int32 episodes_count = 4;
+  int32 episodes_count = 5;
 
-  // ID of the work on Annict.
-  string annict_work_id = 5;
   // URL which the work is provided.
   string official_site_url = 6;
   // Wikipedia URL which the work is provided.
   string wikipedia_url = 7;
+
+  // Time when began watching the work.
+  google.protobuf.Timestamp begin_time = 8;
+  // Time when finished watching the work. Empty if status is WATCHING.
+  google.protobuf.Timestamp finish_time = 9;
 
   enum Status {
     STATUS_UNSPECIFIED = 0;
@@ -41,10 +48,11 @@ message Work {
   }
 
   // Status which indicates that the work is watched/watching.
-  Status status = 8;
+  Status status = 10;
 }
 
 message Dashboard {
   Profile profile = 1;
-  repeated Work works = 2;
+  repeated Work watching_works = 2;
+  repeated Work watched_works = 3;
 }
