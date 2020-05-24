@@ -78,7 +78,7 @@ var seasonToKanji = map[string]string{
 func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
 	var res struct {
 		Viewer struct {
-			AvatorURL       string
+			AvatarURL       string
 			RecordsCount    int32
 			WannaWatchCount int32
 			WatchingCount   int32
@@ -96,7 +96,7 @@ func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
 	v := res.Viewer
 
 	return &resource.Profile{
-		AvatorUrl:       v.AvatorURL,
+		AvatarUrl:       v.AvatarURL,
 		RecordsCount:    v.RecordsCount,
 		WannaWatchCount: v.WannaWatchCount,
 		WatchingCount:   v.WatchingCount,

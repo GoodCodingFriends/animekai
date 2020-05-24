@@ -7,8 +7,8 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/GoodCodingFriends/animekai/resource";
 
 message Profile {
-  // The avator URL of animekai account.
-  string avator_url = 1;
+  // The avatar URL of animekai account.
+  string avatar_url = 1;
   // Total number of records.
   int32 records_count = 2;
   // Number of works which want to watch.

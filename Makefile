@@ -1,5 +1,8 @@
 SHELL := /bin/bash
 
+REGISTRY ?= "gpay-gacha"
+CLOUD_RUN_REGION ?= "us-central1"
+
 TOOLS=$(shell cat tools/tools.go | egrep '^\s_ '  | awk '{ print $$2 }')
 
 .PHONY: proto
@@ -15,14 +18,28 @@ tools:
 build/server:
 	go build -o bin/server ./cmd/server/*.go
 
+.PHONY: build/image
+build/image: build/web build/server
+	@echo "building image..."
+	@echo "registry: $(REGISTRY)"
+	docker build -t $(REGISTRY) .
+
+.PHONY: push/image
+push/image: build/image
+	docker push $(REGISTRY)
+
 .PHONY: build/web
 build/web:
 	cd ../animekai-web; yarn run build
 	statik -src ../animekai-web/dist
 
 .PHONY: deploy
-deploy: build/web build/server
-	cd cmd/cloudfunctions; gcloud functions deploy animekai --runtime go113 --trigger-http --entry-point Main --region asia-northeast1
+deploy: push/image
+	@gcloud beta run deploy \
+		--allow-unauthenticated \
+		--platform managed \
+		--region $(CLOUD_RUN_REGION) $(CLOUD_RUN_SERVICE_NAME) \
+		--image $(REGISTRY)
 
 .PHONY: lint
 lint:

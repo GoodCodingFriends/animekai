@@ -105,6 +105,6 @@ func realMain() error {
 		}
 	}()
 
-	logger.Info("server listen in :8000")
+	logger.Info("server listen in :" + cfg.Port)
 	return srv.ListenAndServe()
 }
