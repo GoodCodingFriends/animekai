@@ -31,8 +31,11 @@ type Service interface {
 	// ListWorks lists watched or watching works.
 	// cursor is for paging, empty string if the first page.
 	ListWorks(ctx context.Context, state WorkState, cursor string, limit int32) (_ []*resource.Work, nextCursor string, _ error)
-
-	CreateNextEpisodeRecord(ctx context.Context)
+	// CreateNextEpisodeRecords creates new records according to watching works.
+	// If a created episode is the last episode, CreateNextEpisodeRecords marks the work state as WATCHED.
+	CreateNextEpisodeRecords(ctx context.Context) error
+	// UpdateWorkStatus updates the work identified by work's ID to the passed work state.
+	UpdateWorkStatus(ctx context.Context, id int, state WorkState) error
 
 	// Stop stops the service.
 	Stop(ctx context.Context) error
@@ -321,6 +324,175 @@ func (s *service) listRecords(ctx context.Context) (map[string]struct{ BeginTime
 	}
 
 	return m, nil
+}
+
+const listNextEpisodes = `
+query ListNextEpisodes {
+  viewer {
+    records {
+      edges {
+        node {
+          episode {
+            nextEpisode {
+              id
+              number
+              nextEpisode {
+                id
+              }
+            }
+            work {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`
+
+const createRecordMutation = `
+mutation CreateRecordMutation($episodeId: ID!) {
+  createRecord(input: {episodeId: $episodeId}) {
+    clientMutationId
+  }
+}
+`
+
+const updateStatusMutation = `
+mutation UpdateStatusMutation($state: StatusState!, $workId: ID!) {
+  updateStatus(input: {state: $state, workId: $workId}) {
+    clientMutationId
+  }
+}
+`
+
+func (s *service) CreateNextEpisodeRecords(ctx context.Context) error {
+	type record struct {
+		Node struct {
+			Episode struct {
+				NextEpisode struct {
+					ID          string // Required to create next record.
+					Number      int    // Required to compare two records.
+					NextEpisode struct {
+						ID string // Required to check NextEpisode is the last episode.
+					}
+				}
+				Work struct {
+					ID string // Required to mark completed work as WATCHED.
+				}
+			}
+		}
+	}
+
+	var res struct {
+		Viewer struct{ Records struct{ Edges []record } }
+	}
+
+	req := graphql.NewRequest(listNextEpisodes)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+
+	if err := s.invoker(ctx, req, &res); err != nil {
+		return convertError(err)
+	}
+
+	finished := map[string]struct{}{}
+	m := map[string]struct {
+		id     string
+		number int
+	}{}
+	for _, r := range res.Viewer.Records.Edges {
+		e := r.Node.Episode
+		if e.NextEpisode.NextEpisode.ID == "" {
+			finished[e.Work.ID] = struct{}{}
+		}
+		if m[e.Work.ID].number < e.NextEpisode.Number {
+			m[e.Work.ID] = struct {
+				id     string
+				number int
+			}{e.NextEpisode.ID, e.NextEpisode.Number}
+		}
+	}
+
+	var eg errgroup.Group
+	for _, e := range m {
+		e := e
+		eg.Go(func() error {
+			req := graphql.NewRequest(createRecordMutation)
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+			req.Var("episodeId", e.id)
+
+			if err := s.invoker(ctx, req, struct{}{}); err != nil {
+				return failure.Wrap(convertError(err), failure.Context{"episode_id": e.id})
+			}
+			return nil
+		})
+	}
+	for workID := range finished {
+		workID := workID
+		eg.Go(func() error {
+			req := graphql.NewRequest(updateStatusMutation)
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+			req.Var("state", WorkStateWatched)
+			req.Var("workId", workID)
+
+			if err := s.invoker(ctx, req, struct{}{}); err != nil {
+				return failure.Wrap(convertError(err), failure.Context{"work_id": workID})
+			}
+			return nil
+		})
+	}
+
+	if err := eg.Wait(); err != nil {
+		return failure.Wrap(err)
+	}
+
+	return nil
+}
+
+const getWorkQuery = `
+query GetWork($ids: [Int!]) {
+  searchWorks(annictIds: $ids) {
+    edges {
+      node {
+        id
+        title
+      }
+    }
+  }
+}
+`
+
+const updateWorkStatusMutation = `
+mutation UpdateWorkStatus($workId: ID!){
+  updateStatus(input:{state: WATCHING, workId: $workId}) {
+    clientMutationId
+  }
+}
+`
+
+func (s *service) UpdateWorkStatus(ctx context.Context, workID int, state WorkState) error {
+	var res struct {
+		SearchWorks struct {
+			Edges []struct{ Node struct{ ID string } }
+		}
+	}
+
+	req := graphql.NewRequest(getWorkQuery)
+	req.Var("ids", []int{workID})
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+	if err := s.invoker(ctx, req, &res); err != nil {
+		return convertError(err)
+	}
+
+	req = graphql.NewRequest(updateWorkStatusMutation)
+	req.Var("workId", res.SearchWorks.Edges[0].Node.ID)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+	if err := s.invoker(ctx, req, &res); err != nil {
+		return convertError(err)
+	}
+
+	return nil
 }
 
 func (s *service) Stop(ctx context.Context) error {

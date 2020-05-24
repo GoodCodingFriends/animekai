@@ -3,7 +3,7 @@ package annict
 import (
 	"context"
 	stderr "errors"
-	"os"
+	"net/http"
 	"testing"
 
 	"github.com/GoodCodingFriends/animekai/errors"
@@ -36,7 +36,7 @@ func TestGetProfile(t *testing.T) {
 		c := c
 
 		t.Run(name, func(t *testing.T) {
-			addr := testutil.RunAnnictServer(t)
+			addr := testutil.RunAnnictServer(t, nil)
 
 			svc := New("token", addr)
 			if c.GraphQLErr != nil {
@@ -88,7 +88,7 @@ func TestListWorks(t *testing.T) {
 		c := c
 
 		t.Run(name, func(t *testing.T) {
-			addr := testutil.RunAnnictServer(t)
+			addr := testutil.RunAnnictServer(t, nil)
 
 			svc := New("token", addr)
 			if c.GraphQLErr != nil {
@@ -119,10 +119,57 @@ func TestListWorks(t *testing.T) {
 	}
 }
 
-func Test_listRecords(t *testing.T) {
-	svc := New(os.Getenv("ANNICT_TOKEN"), os.Getenv("ANNICT_ENDPOINT"))
-	_, err := svc.(*service).listRecords(context.Background())
-	if err != nil {
-		t.Fatal(err)
+func TestCreateNextEpisodeRecords(t *testing.T) {
+	cases := map[string]struct {
+		GraphQLErr  error
+		codeDecider map[string]int
+		wantCode    failure.Code
+	}{
+		"normal": {},
+		"ListNextEpisodes returns context.Canceled": {
+			GraphQLErr: context.Canceled,
+			wantCode:   errors.Canceled,
+		},
+		"ListNextEpisodes returns context.DeadlineExceeded": {
+			GraphQLErr: context.DeadlineExceeded,
+			wantCode:   errors.DeadlineExceeded,
+		},
+		"ListNextEpisodes returns other error": {
+			GraphQLErr: stderr.New("err"),
+			wantCode:   errors.Internal,
+		},
+		"CreateRecordMutation returns an error": {
+			codeDecider: map[string]int{"CreateRecordMutation": http.StatusInternalServerError},
+			wantCode:    errors.Internal,
+		},
+	}
+
+	for name, c := range cases {
+		c := c
+
+		t.Run(name, func(t *testing.T) {
+			addr := testutil.RunAnnictServer(t, c.codeDecider)
+
+			svc := New("token", addr)
+			if c.GraphQLErr != nil {
+				svc.(*service).invoker = func(context.Context, *graphql.Request, interface{}) error {
+					return c.GraphQLErr
+				}
+			}
+			err := svc.CreateNextEpisodeRecords(context.Background())
+			if c.GraphQLErr != nil || c.codeDecider != nil {
+				if err == nil {
+					t.Fatal("want error, but got nil")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if err != nil {
+				t.Errorf("should not return an error, but got '%s'", err)
+			}
+		})
 	}
 }
