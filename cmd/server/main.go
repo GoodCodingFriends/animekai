@@ -83,7 +83,7 @@ func realMain() error {
 		!cfg.Env.IsProd(),
 	)
 
-	srv := &http.Server{Addr: ":8000", Handler: handler}
+	srv := &http.Server{Addr: ":" + cfg.Port, Handler: handler}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
