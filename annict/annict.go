@@ -33,7 +33,7 @@ type Service interface {
 	ListWorks(ctx context.Context, state WorkState, cursor string, limit int32) (_ []*resource.Work, nextCursor string, _ error)
 	// CreateNextEpisodeRecords creates new records according to watching works.
 	// If a created episode is the last episode, CreateNextEpisodeRecords marks the work state as WATCHED.
-	CreateNextEpisodeRecords(ctx context.Context) error
+	CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error)
 	// UpdateWorkStatus updates the work identified by work's ID to the passed work state.
 	UpdateWorkStatus(ctx context.Context, id int, state WorkState) error
 
@@ -336,12 +336,15 @@ query ListNextEpisodes {
             nextEpisode {
               id
               number
+              numberText
+              title
               nextEpisode {
                 id
               }
             }
             work {
               id
+              title
             }
           }
         }
@@ -367,19 +370,22 @@ mutation UpdateStatusMutation($state: StatusState!, $workId: ID!) {
 }
 `
 
-func (s *service) CreateNextEpisodeRecords(ctx context.Context) error {
+func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error) {
 	type record struct {
 		Node struct {
 			Episode struct {
 				NextEpisode struct {
 					ID          string // Required to create next record.
 					Number      int    // Required to compare two records.
+					NumberText  string
+					Title       string
 					NextEpisode struct {
 						ID string // Required to check NextEpisode is the last episode.
 					}
 				}
 				Work struct {
-					ID string // Required to mark completed work as WATCHED.
+					ID    string // Required to mark completed work as WATCHED.
+					Title string
 				}
 			}
 		}
@@ -393,13 +399,16 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) error {
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
 
 	if err := s.invoker(ctx, req, &res); err != nil {
-		return convertError(err)
+		return nil, convertError(err)
 	}
 
 	finished := map[string]struct{}{}
 	m := map[string]struct {
-		id     string
-		number int
+		id         string
+		title      string
+		number     int
+		numberText string
+		workTitle  string
 	}{}
 	for _, r := range res.Viewer.Records.Edges {
 		e := r.Node.Episode
@@ -408,9 +417,12 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) error {
 		}
 		if m[e.Work.ID].number < e.NextEpisode.Number {
 			m[e.Work.ID] = struct {
-				id     string
-				number int
-			}{e.NextEpisode.ID, e.NextEpisode.Number}
+				id         string
+				title      string
+				number     int
+				numberText string
+				workTitle  string
+			}{e.NextEpisode.ID, e.NextEpisode.Title, e.NextEpisode.Number, e.NextEpisode.NumberText, e.Work.Title}
 		}
 	}
 
@@ -444,10 +456,19 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) error {
 	}
 
 	if err := eg.Wait(); err != nil {
-		return failure.Wrap(err)
+		return nil, failure.Wrap(err)
 	}
 
-	return nil
+	episodes := make([]*resource.Episode, 0, len(m))
+	for _, r := range m {
+		episodes = append(episodes, &resource.Episode{
+			WorkTitle:  r.workTitle,
+			Title:      r.title,
+			NumberText: r.numberText,
+		})
+	}
+
+	return episodes, nil
 }
 
 const getWorkQuery = `
@@ -457,6 +478,11 @@ query GetWork($ids: [Int!]) {
       node {
         id
         title
+        episodes(first: 1, orderBy: {direction: ASC, field: SORT_NUMBER}) {
+          nodes {
+            id
+          }
+        }
       }
     }
   }
@@ -474,7 +500,16 @@ mutation UpdateWorkStatus($workId: ID!){
 func (s *service) UpdateWorkStatus(ctx context.Context, workID int, state WorkState) error {
 	var res struct {
 		SearchWorks struct {
-			Edges []struct{ Node struct{ ID string } }
+			Edges []struct {
+				Node struct {
+					ID       string
+					Episodes struct {
+						Nodes []struct {
+							ID string
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -485,11 +520,23 @@ func (s *service) UpdateWorkStatus(ctx context.Context, workID int, state WorkSt
 		return convertError(err)
 	}
 
-	req = graphql.NewRequest(updateWorkStatusMutation)
-	req.Var("workId", res.SearchWorks.Edges[0].Node.ID)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-	if err := s.invoker(ctx, req, &res); err != nil {
+	var eg errgroup.Group
+	eg.Go(func() error {
+		req := graphql.NewRequest(updateWorkStatusMutation)
+		req.Var("workId", res.SearchWorks.Edges[0].Node.ID)
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+		err := s.invoker(ctx, req, &res)
 		return convertError(err)
+	})
+	eg.Go(func() error {
+		req = graphql.NewRequest(createRecordMutation)
+		req.Var("episodeId", res.SearchWorks.Edges[0].Node.Episodes.Nodes[0].ID)
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+		err := s.invoker(ctx, req, &res)
+		return convertError(err)
+	})
+	if err := eg.Wait(); err != nil {
+		return failure.Wrap(err)
 	}
 
 	return nil

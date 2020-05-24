@@ -30,6 +30,10 @@ func New(annict annict.Service) Service {
 }
 
 func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest) (*api.GetDashboardResponse, error) {
+	if err := validateGetDashboardRequest(req); err != nil {
+		return nil, failure.Wrap(err)
+	}
+
 	var (
 		profile       *resource.Profile
 		watchingWorks []*resource.Work
@@ -79,6 +83,10 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 }
 
 func (s *service) ListWorks(ctx context.Context, req *api.ListWorksRequest) (*api.ListWorksResponse, error) {
+	if err := validateListWorksRequest(req); err != nil {
+		return nil, failure.Wrap(err)
+	}
+
 	var state annict.WorkState
 	switch req.State {
 	case api.WorkState_WATCHING:

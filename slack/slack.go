@@ -3,6 +3,7 @@ package slack
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/GoodCodingFriends/animekai/annict"
+	"github.com/GoodCodingFriends/animekai/resource"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"github.com/morikuni/failure"
 	"github.com/slack-go/slack"
@@ -70,14 +72,20 @@ func (h *commandHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch sp[0] {
 	case "start":
 		h.logger.Info("start")
-		if err := start(ctxzap.ToContext(context.Background(), h.logger.Named("start")), h.annict); err != nil {
+		episodes, err := start(ctxzap.ToContext(context.Background(), h.logger.Named("start")), h.annict)
+		if err != nil {
 			h.logger.Error("failed to start", zap.Error(err))
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
+		var text string
+		for _, e := range episodes {
+			text += fmt.Sprintf("- %s %s %s\n", e.WorkTitle, e.NumberText, e.Title)
+		}
+
 		w.Header().Set("Content-Type", "application/json")
-		params := &slack.Msg{ResponseType: slack.ResponseTypeInChannel, Text: ":lgtm-1:"}
+		params := &slack.Msg{ResponseType: slack.ResponseTypeInChannel, Text: strings.TrimSpace(text)}
 		if err := json.NewEncoder(w).Encode(params); err != nil {
 			h.logger.Warn("failed to encode response body", zap.Error(err))
 		}
@@ -109,11 +117,12 @@ func (h *commandHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func start(ctx context.Context, annictService annict.Service) error {
-	if err := annictService.CreateNextEpisodeRecords(ctx); err != nil {
-		return failure.Wrap(err)
+func start(ctx context.Context, annictService annict.Service) ([]*resource.Episode, error) {
+	episodes, err := annictService.CreateNextEpisodeRecords(ctx)
+	if err != nil {
+		return nil, failure.Wrap(err)
 	}
-	return nil
+	return episodes, nil
 }
 
 func add(ctx context.Context, annictService annict.Service, args []string) error {
@@ -123,7 +132,7 @@ func add(ctx context.Context, annictService annict.Service, args []string) error
 		return failure.Wrap(err, failure.Context{"work_id": args[0]})
 	}
 
-	if err := h.annict.UpdateWorkStatus(ctx, workID, annict.WorkStateWatching); err != nil {
+	if err := annictService.UpdateWorkStatus(ctx, workID, annict.WorkStateWatching); err != nil {
 		return failure.Wrap(err)
 	}
 	return nil
