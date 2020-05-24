@@ -1,0 +1,21 @@
+{
+  "data": {
+    "searchWorks": {
+      "edges": [
+        {
+          "node": {
+            "id": "V29yay02MTU=",
+            "title": "CLANNAD～AFTER STORY～",
+            "episodes": {
+              "nodes": [
+                {
+                  "id": "RXBpc29kZS0zNDQw"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

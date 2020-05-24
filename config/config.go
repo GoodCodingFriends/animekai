@@ -1,7 +1,7 @@
 package config
 
 type Config struct {
-	Port               string `envconfig:"PORT" default:8000`
+	Port               string `envconfig:"PORT" default:"8000"`
 	Env                Env    `envconfig:"ENV" default:"dev"`
 	AnnictToken        string `envconfig:"ANNICT_TOKEN" required:"true"`
 	AnnictEndpoint     string `envconfig:"ANNICT_ENDPOINT" required:"true"`

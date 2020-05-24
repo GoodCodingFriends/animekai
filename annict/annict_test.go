@@ -156,7 +156,7 @@ func TestCreateNextEpisodeRecords(t *testing.T) {
 					return c.GraphQLErr
 				}
 			}
-			err := svc.CreateNextEpisodeRecords(context.Background())
+			_, err := svc.CreateNextEpisodeRecords(context.Background())
 			if c.GraphQLErr != nil || c.codeDecider != nil {
 				if err == nil {
 					t.Fatal("want error, but got nil")

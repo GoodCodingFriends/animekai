@@ -1,6 +1,7 @@
 package e2e_test
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"io/ioutil"
@@ -29,7 +30,21 @@ func newClientAndRunServer(t *testing.T) *client {
 	annictEndpoint := testutil.RunAnnictServer(t, nil)
 	cfg.AnnictEndpoint = annictEndpoint
 
-	handler := server.New(zap.NewNop(), statistics.New(annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)))
+	logger := zap.NewNop()
+	if testing.Verbose() {
+		l, err := zap.NewDevelopment()
+		if err != nil {
+			t.Fatal(err)
+		}
+		logger = l
+	}
+	handler := server.New(
+		logger,
+		statistics.New(annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)),
+		http.HandlerFunc(nil),
+		nil,
+		false,
+	)
 	srv := &http.Server{Addr: "127.0.0.1:8000", Handler: handler}
 	go func() {
 		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
@@ -61,8 +76,8 @@ func newClient(t *testing.T, addr string) *client {
 	}
 }
 
-func (c *client) GetDashboard(ctx context.Context) (*api.GetDashboardResponse, error) {
-	res := c.get(c.endpoint("getdashboard")) //nolint:bodyclose
+func (c *client) GetDashboard(ctx context.Context, req *api.GetDashboardRequest) (*api.GetDashboardResponse, error) {
+	res := c.post(c.endpoint("getdashboard"), req) //nolint:bodyclose
 
 	var m api.GetDashboardResponse
 	c.unmarshal(res.Body, &m)
@@ -70,15 +85,20 @@ func (c *client) GetDashboard(ctx context.Context) (*api.GetDashboardResponse, e
 }
 
 func (c *client) ListWorks(ctx context.Context, req *api.ListWorksRequest) (*api.ListWorksResponse, error) {
-	res := c.get(c.endpoint("listworks")) //nolint:bodyclose
+	res := c.post(c.endpoint("listworks"), req) //nolint:bodyclose
 
 	var m api.ListWorksResponse
 	c.unmarshal(res.Body, &m)
 	return &m, nil
 }
 
-func (c *client) get(url string) *http.Response {
-	res, err := c.hc.Get(url)
+func (c *client) post(url string, req proto.Message) *http.Response {
+	b, err := protojson.Marshal(req)
+	if err != nil {
+		c.t.Fatal(err)
+	}
+
+	res, err := c.hc.Post(url, "application/json", bytes.NewReader(b))
 	if err != nil {
 		c.t.Fatal(err)
 	}
@@ -87,12 +107,15 @@ func (c *client) get(url string) *http.Response {
 			c.t.Errorf("failed to close response body: %s", err)
 		}
 	})
+	if res.Header.Get("Grpc-Status") != "" {
+		c.t.Fatalf("non-OK code is returned: %s", res.Header.Get("Grpc-Status"))
+	}
 	if res.Header.Get("Content-Type") != "application/json" {
 		b, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			c.t.Fatal(err)
 		}
-		c.t.Fatalf("unexpected response: %s", string(b))
+		c.t.Fatalf("unexpected response: %s, %s", string(b), res.Status)
 	}
 	return res
 }

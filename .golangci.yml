@@ -28,7 +28,6 @@ linters:
     - lll
     - misspell
     - nakedret
-    - nolintlint
     - rowserrcheck
     - scopelint
     - staticcheck

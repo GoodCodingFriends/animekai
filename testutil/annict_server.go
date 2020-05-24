@@ -43,6 +43,8 @@ func RunAnnictServer(t testing.T, codeDecider map[string]int) (addr string) {
 		}
 
 		switch {
+		case strings.Contains(s, "GetWork"):
+			copyFile(t, w, "get_work_response")
 		case strings.Contains(s, "GetProfile"):
 			copyFile(t, w, "get_profile_response")
 		case strings.Contains(s, "ListWorks"):
@@ -51,7 +53,9 @@ func RunAnnictServer(t testing.T, codeDecider map[string]int) (addr string) {
 			copyFile(t, w, "list_records_response")
 		case strings.Contains(s, "ListNextEpisodes"):
 			copyFile(t, w, "list_next_episodes_response")
-		case strings.Contains(s, "CreateRecordMutation"):
+
+		case strings.Contains(s, "CreateRecordMutation"),
+			strings.Contains(s, "UpdateStatusMutation"):
 			if _, err := io.WriteString(w, "{}"); err != nil {
 				t.Fatal(err)
 			}

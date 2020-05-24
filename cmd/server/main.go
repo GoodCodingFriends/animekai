@@ -33,7 +33,7 @@ func main() {
 	}
 }
 
-func realMain() error {
+func realMain() error { //nolint:funlen
 	var cfg config.Config
 	if err := envconfig.Process("", &cfg); err != nil {
 		return failure.Translate(err, errors.Internal)
@@ -52,7 +52,6 @@ func realMain() error {
 	if cfg.Env.IsDev() {
 		cfg.AnnictEndpoint = testutil.RunAnnictServer(&testing.RuntimeT{}, nil)
 		logger.Info("dummy Annict server is enabled", zap.String("addr", cfg.AnnictEndpoint))
-
 	}
 
 	var statikFS http.FileSystem

@@ -14,7 +14,7 @@ func TestListWorks(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	res, err := client.ListWorks(ctx, &api.ListWorksRequest{PageSize: 5})
+	res, err := client.ListWorks(ctx, &api.ListWorksRequest{State: api.WorkState_WATCHING, PageSize: 5})
 	if err != nil {
 		t.Fatal(err)
 	}

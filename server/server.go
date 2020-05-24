@@ -14,8 +14,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	_ "github.com/GoodCodingFriends/animekai/statik"
 )
 
 // New returns a handler for statistics server.

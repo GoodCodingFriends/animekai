@@ -30,7 +30,12 @@ type Service interface {
 	GetProfile(ctx context.Context) (*resource.Profile, error)
 	// ListWorks lists watched or watching works.
 	// cursor is for paging, empty string if the first page.
-	ListWorks(ctx context.Context, state WorkState, cursor string, limit int32) (_ []*resource.Work, nextCursor string, _ error)
+	ListWorks(
+		ctx context.Context,
+		state WorkState,
+		cursor string,
+		limit int32,
+	) (_ []*resource.Work, nextCursor string, _ error)
 	// CreateNextEpisodeRecords creates new records according to watching works.
 	// If a created episode is the last episode, CreateNextEpisodeRecords marks the work state as WATCHED.
 	CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error)
@@ -127,7 +132,13 @@ query ListWorks($state: StatusState, $after: String, $n: Int!) {
 }
 `
 
-func (s *service) ListWorks(ctx context.Context, state WorkState, cursor string, limit int32) ([]*resource.Work, string, error) {
+//nolint:funlen
+func (s *service) ListWorks(
+	ctx context.Context,
+	state WorkState,
+	cursor string,
+	limit int32,
+) ([]*resource.Work, string, error) {
 	type work struct {
 		Cursor string
 		Node   struct {
@@ -141,7 +152,6 @@ func (s *service) ListWorks(ctx context.Context, state WorkState, cursor string,
 			ViewerStatusState string
 		}
 	}
-
 	var res struct {
 		Viewer struct{ Works struct{ Edges []work } }
 	}
@@ -155,7 +165,6 @@ func (s *service) ListWorks(ctx context.Context, state WorkState, cursor string,
 	}
 	req.Var("n", limit)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-
 	if err := s.invoker(ctx, req, &res); err != nil {
 		return nil, "", convertError(err)
 	}
@@ -222,29 +231,32 @@ func (s *service) ListWorks(ctx context.Context, state WorkState, cursor string,
 	}
 
 	for i := range works {
-		if m, ok := records[works[i].Title]; ok {
-			beginTime, err := ptypes.TimestampProto(m.BeginTime)
+		m, ok := records[works[i].Title]
+		if !ok {
+			continue
+		}
+
+		beginTime, err := ptypes.TimestampProto(m.BeginTime)
+		if err != nil {
+			ctxzap.Extract(ctx).Warn(
+				"failed to convert begin time",
+				zap.Error(err),
+				zap.Time("begin_time", m.BeginTime),
+			)
+		} else {
+			works[i].BeginTime = beginTime
+		}
+
+		if !m.FinishTime.IsZero() {
+			finishTime, err := ptypes.TimestampProto(m.FinishTime)
 			if err != nil {
 				ctxzap.Extract(ctx).Warn(
-					"failed to convert begin time",
+					"failed to convert finish time",
 					zap.Error(err),
-					zap.Time("begin_time", m.BeginTime),
+					zap.Time("finish_time", m.FinishTime),
 				)
 			} else {
-				works[i].BeginTime = beginTime
-			}
-
-			if !m.FinishTime.IsZero() {
-				finishTime, err := ptypes.TimestampProto(m.FinishTime)
-				if err != nil {
-					ctxzap.Extract(ctx).Warn(
-						"failed to convert finish time",
-						zap.Error(err),
-						zap.Time("finish_time", m.FinishTime),
-					)
-				} else {
-					works[i].FinishTime = finishTime
-				}
+				works[i].FinishTime = finishTime
 			}
 		}
 	}
@@ -370,7 +382,7 @@ mutation UpdateStatusMutation($state: StatusState!, $workId: ID!) {
 }
 `
 
-func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error) {
+func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error) { //nolint:funlen
 	type record struct {
 		Node struct {
 			Episode struct {
@@ -522,17 +534,17 @@ func (s *service) UpdateWorkStatus(ctx context.Context, workID int, state WorkSt
 
 	var eg errgroup.Group
 	eg.Go(func() error {
-		req := graphql.NewRequest(updateWorkStatusMutation)
-		req.Var("workId", res.SearchWorks.Edges[0].Node.ID)
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-		err := s.invoker(ctx, req, &res)
+		r := graphql.NewRequest(updateWorkStatusMutation)
+		r.Var("workId", res.SearchWorks.Edges[0].Node.ID)
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+		err := s.invoker(ctx, r, &res)
 		return convertError(err)
 	})
 	eg.Go(func() error {
-		req = graphql.NewRequest(createRecordMutation)
-		req.Var("episodeId", res.SearchWorks.Edges[0].Node.Episodes.Nodes[0].ID)
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-		err := s.invoker(ctx, req, &res)
+		r := graphql.NewRequest(createRecordMutation)
+		r.Var("episodeId", res.SearchWorks.Edges[0].Node.Episodes.Nodes[0].ID)
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
+		err := s.invoker(ctx, r, &res)
 		return convertError(err)
 	})
 	if err := eg.Wait(); err != nil {
