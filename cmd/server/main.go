@@ -13,9 +13,7 @@ import (
 	"github.com/GoodCodingFriends/animekai/server"
 	"github.com/GoodCodingFriends/animekai/slack"
 	"github.com/GoodCodingFriends/animekai/statistics"
-	"github.com/GoodCodingFriends/animekai/testutil"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/mitchellh/go-testing-interface"
 	"github.com/morikuni/failure"
 	"go.uber.org/zap"
 )
@@ -43,10 +41,10 @@ func realMain() error {
 		}
 	}()
 
-	if cfg.Env.IsDev() {
-		cfg.AnnictEndpoint = testutil.RunAnnictServer(&testing.RuntimeT{})
-		logger.Info("dummy Annict server is enabled", zap.String("addr", cfg.AnnictEndpoint))
-	}
+	// if cfg.Env.IsDev() {
+	// 	cfg.AnnictEndpoint = testutil.RunAnnictServer(&testing.RuntimeT{}, nil)
+	// 	logger.Info("dummy Annict server is enabled", zap.String("addr", cfg.AnnictEndpoint))
+	// }
 
 	annictService := annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)
 	defer func() {
@@ -57,7 +55,7 @@ func realMain() error {
 		}
 	}()
 
-	slackService := slack.NewCommandHandler(logger, cfg.SlackSigningSecret)
+	slackService := slack.NewCommandHandler(logger, cfg.SlackSigningSecret, annictService)
 
 	handler := server.New(
 		logger,

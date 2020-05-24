@@ -2,16 +2,25 @@ package slack
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"path"
+	"strconv"
+	"strings"
 
 	"github.com/GoodCodingFriends/animekai/annict"
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"github.com/morikuni/failure"
 	"github.com/slack-go/slack"
 	"go.uber.org/zap"
-	"golang.org/x/sync/errgroup"
 )
+
+type response struct {
+	ResponseType string `json:"response_type"`
+	Text         string `json:"text"`
+}
 
 type commandHandler struct {
 	logger        *zap.Logger
@@ -20,10 +29,11 @@ type commandHandler struct {
 	annict annict.Service
 }
 
-func NewCommandHandler(logger *zap.Logger, signingSecret string) http.Handler {
+func NewCommandHandler(logger *zap.Logger, signingSecret string, annictService annict.Service) http.Handler {
 	return &commandHandler{
 		logger:        logger,
 		signingSecret: signingSecret,
+		annict:        annictService,
 	}
 }
 
@@ -56,28 +66,65 @@ func (h *commandHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	switch cmd.Text {
+	sp := strings.Split(cmd.Text, " ")
+	switch sp[0] {
 	case "start":
 		h.logger.Info("start")
+		if err := start(ctxzap.ToContext(context.Background(), h.logger.Named("start")), h.annict); err != nil {
+			h.logger.Error("failed to start", zap.Error(err))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		params := &slack.Msg{ResponseType: slack.ResponseTypeInChannel, Text: ":lgtm-1:"}
+		if err := json.NewEncoder(w).Encode(params); err != nil {
+			h.logger.Warn("failed to encode response body", zap.Error(err))
+		}
+		return
 	case "add":
 		h.logger.Info("add")
+		if len(sp) == 1 || sp[1] == "-h" || sp[1] == "--help" {
+			params := &slack.Msg{
+				ResponseType: slack.ResponseTypeInChannel,
+				Text:         "usage: /animekai add https://annict.jp/works/<workID>",
+			}
+			if err := json.NewEncoder(w).Encode(params); err != nil {
+				h.logger.Warn("failed to encode response body", zap.Error(err))
+			}
+			return
+		}
+		ctx := ctxzap.ToContext(context.Background(), h.logger.Named("add"))
+		if err := add(ctx, h.annict, sp[1:]); err != nil {
+			h.logger.Error("failed to add", zap.Error(err))
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		params := &slack.Msg{ResponseType: slack.ResponseTypeInChannel, Text: ":lgtm-1:"}
+		if err := json.NewEncoder(w).Encode(params); err != nil {
+			h.logger.Warn("failed to encode response body", zap.Error(err))
+		}
+		return
 	}
 }
 
 func start(ctx context.Context, annictService annict.Service) error {
-	works, _, err := annictService.ListWorks(ctx, annict.WorkStateWatching, "", 100)
+	if err := annictService.CreateNextEpisodeRecords(ctx); err != nil {
+		return failure.Wrap(err)
+	}
+	return nil
+}
+
+func add(ctx context.Context, annictService annict.Service, args []string) error {
+	v := path.Base(args[0])
+	workID, err := strconv.Atoi(v)
 	if err != nil {
-		return failure.Wrap(err)
+		return failure.Wrap(err, failure.Context{"work_id": args[0]})
 	}
 
-	var eg errgroup.Group
-	for _, work := range works {
-		eg.Go(func() error {
-			return annictService.CreateNextEpisodeRecord(ctx, work.Id)
-		})
-	}
-
-	if err := eg.Wait(); err != nil {
+	if err := h.annict.UpdateWorkStatus(ctx, workID, annict.WorkStateWatching); err != nil {
 		return failure.Wrap(err)
 	}
+	return nil
 }

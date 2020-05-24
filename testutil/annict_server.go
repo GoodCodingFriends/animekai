@@ -17,7 +17,7 @@ import (
 var root string
 
 // RunAnnictServer runs a dummy Annict server for testing and returns the server address.
-func RunAnnictServer(t testing.T) (addr string) {
+func RunAnnictServer(t testing.T, codeDecider map[string]int) (addr string) {
 	var buf bytes.Buffer
 	cmd := exec.Command("git", "rev-parse", "--show-cdup")
 	cmd.Stdout = &buf
@@ -35,6 +35,13 @@ func RunAnnictServer(t testing.T) (addr string) {
 		}
 		s := string(b)
 
+		for name, code := range codeDecider {
+			if strings.Contains(s, name) {
+				w.WriteHeader(code)
+				return
+			}
+		}
+
 		switch {
 		case strings.Contains(s, "GetProfile"):
 			copyFile(t, w, "get_profile_response")
@@ -42,6 +49,12 @@ func RunAnnictServer(t testing.T) (addr string) {
 			copyFile(t, w, "list_works_response")
 		case strings.Contains(s, "listRecords"):
 			copyFile(t, w, "list_records_response")
+		case strings.Contains(s, "ListNextEpisodes"):
+			copyFile(t, w, "list_next_episodes_response")
+		case strings.Contains(s, "CreateRecordMutation"):
+			if _, err := io.WriteString(w, "{}"); err != nil {
+				t.Fatal(err)
+			}
 		default:
 			t.Error("unknown query")
 		}

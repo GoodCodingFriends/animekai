@@ -26,7 +26,7 @@ func newClientAndRunServer(t *testing.T) *client {
 		t.Fatal(err)
 	}
 
-	annictEndpoint := testutil.RunAnnictServer(t)
+	annictEndpoint := testutil.RunAnnictServer(t, nil)
 	cfg.AnnictEndpoint = annictEndpoint
 
 	handler := server.New(zap.NewNop(), statistics.New(annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)))

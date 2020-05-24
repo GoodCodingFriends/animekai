@@ -1,0 +1,95 @@
+{
+  "data": {
+    "viewer": {
+      "records": {
+        "edges": [
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDIyOA==",
+                  "number": 2,
+                  "sortNumber": 20,
+                  "title": "ろうたけたる思い"
+                },
+                "work": {
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDMxMw==",
+                  "number": 3,
+                  "sortNumber": 30,
+                  "title": "風格ある振る舞い"
+                },
+                "work": {
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY1",
+                  "number": 2,
+                  "sortNumber": 2,
+                  "title": "旋律の…聖調理人（プリーステス）"
+                },
+                "work": {
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDIyOA==",
+                  "number": 2,
+                  "sortNumber": 20,
+                  "title": "ろうたけたる思い"
+                },
+                "work": {
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY2",
+                  "number": 3,
+                  "sortNumber": 3,
+                  "title": "異端なる…双尾娘（ツインテール）"
+                },
+                "work": {
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": null,
+                "work": {
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

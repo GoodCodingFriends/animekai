@@ -31,15 +31,17 @@ message Work {
   // How number of episodes the work has.
   int32 episodes_count = 5;
 
+  // Work's identifier for Annict.
+  string annict_work_id = 6;
   // URL which the work is provided.
-  string official_site_url = 6;
+  string official_site_url = 7;
   // Wikipedia URL which the work is provided.
-  string wikipedia_url = 7;
+  string wikipedia_url = 8;
 
   // Time when began watching the work.
-  google.protobuf.Timestamp begin_time = 8;
+  google.protobuf.Timestamp begin_time = 9;
   // Time when finished watching the work. Empty if status is WATCHING.
-  google.protobuf.Timestamp finish_time = 9;
+  google.protobuf.Timestamp finish_time = 10;
 
   enum Status {
     STATUS_UNSPECIFIED = 0;
@@ -48,7 +50,7 @@ message Work {
   }
 
   // Status which indicates that the work is watched/watching.
-  Status status = 10;
+  Status status = 11;
 }
 
 message Dashboard {
