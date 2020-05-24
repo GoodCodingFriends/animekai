@@ -14,6 +14,8 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	_ "github.com/GoodCodingFriends/animekai/statik"
 )
 
 // New returns a handler for statistics server.
@@ -21,6 +23,7 @@ func New(
 	logger *zap.Logger,
 	statisticsService api.StatisticsServer,
 	slackService http.Handler,
+	fs http.FileSystem,
 	enableCORS bool,
 ) http.Handler {
 	ints := interceptors(logger)
@@ -30,6 +33,9 @@ func New(
 	mux.Handle(endpoint(srv.GetDashboardWithName(appendGRPCStatusToHeader, ints...)))
 	mux.Handle(endpoint(srv.ListWorksWithName(appendGRPCStatusToHeader, ints...)))
 	mux.Handle("/slack", slackService)
+	if fs != nil {
+		mux.Handle("/", http.FileServer(fs))
+	}
 
 	if enableCORS {
 		logger.Info("enable CORS")

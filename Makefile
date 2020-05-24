@@ -11,9 +11,18 @@ proto:
 tools:
 	GOBIN=$(PWD)/bin go install -mod readonly $(TOOLS)
 
-.PHONY: build
-build:
+.PHONY: build/server
+build/server:
 	go build -o bin/server ./cmd/server/*.go
+
+.PHONY: build/web
+build/web:
+	cd ../animekai-web; yarn run build
+	statik -src ../animekai-web/dist
+
+.PHONY: deploy
+deploy: build/web build/server
+	cd cmd/cloudfunctions; gcloud functions deploy animekai --runtime go113 --trigger-http --entry-point Main --region asia-northeast1
 
 .PHONY: lint
 lint:

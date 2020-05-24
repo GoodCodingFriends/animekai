@@ -12,3 +12,7 @@ type Env string
 func (e Env) IsDev() bool {
 	return string(e) == "dev"
 }
+
+func (e Env) IsProd() bool {
+	return string(e) == "prod"
+}

@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/GoodCodingFriends/animekai/annict"
@@ -13,9 +16,14 @@ import (
 	"github.com/GoodCodingFriends/animekai/server"
 	"github.com/GoodCodingFriends/animekai/slack"
 	"github.com/GoodCodingFriends/animekai/statistics"
+	"github.com/GoodCodingFriends/animekai/testutil"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/mitchellh/go-testing-interface"
 	"github.com/morikuni/failure"
+	"github.com/rakyll/statik/fs"
 	"go.uber.org/zap"
+
+	_ "github.com/GoodCodingFriends/animekai/statik"
 )
 
 func main() {
@@ -41,10 +49,20 @@ func realMain() error {
 		}
 	}()
 
-	// if cfg.Env.IsDev() {
-	// 	cfg.AnnictEndpoint = testutil.RunAnnictServer(&testing.RuntimeT{}, nil)
-	// 	logger.Info("dummy Annict server is enabled", zap.String("addr", cfg.AnnictEndpoint))
-	// }
+	if cfg.Env.IsDev() {
+		cfg.AnnictEndpoint = testutil.RunAnnictServer(&testing.RuntimeT{}, nil)
+		logger.Info("dummy Annict server is enabled", zap.String("addr", cfg.AnnictEndpoint))
+
+	}
+
+	var statikFS http.FileSystem
+	if cfg.Env.IsProd() {
+		fs, err := fs.New()
+		if err != nil {
+			return failure.Wrap(err)
+		}
+		statikFS = fs
+	}
 
 	annictService := annict.New(cfg.AnnictToken, cfg.AnnictEndpoint)
 	defer func() {
@@ -61,9 +79,32 @@ func realMain() error {
 		logger,
 		statistics.New(annictService),
 		slackService,
-		cfg.Env.IsDev(),
+		statikFS,
+		!cfg.Env.IsProd(),
 	)
-	logger.Info("server listen in :8000")
+
 	srv := &http.Server{Addr: ":8000", Handler: handler}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		select {
+		case <-sigCh:
+		case <-ctx.Done():
+			return
+		}
+
+		cctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		defer cancel()
+
+		if err := srv.Shutdown(cctx); err != nil {
+			log.Printf("srv.Shutdown returned an error: %s", err)
+		}
+	}()
+
+	logger.Info("server listen in :8000")
 	return srv.ListenAndServe()
 }
