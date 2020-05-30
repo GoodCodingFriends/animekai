@@ -34,6 +34,7 @@ jobs:
       env:
         ANNICT_TOKEN: dummy
         ANNICT_ENDPOINT: http://example.com/dummy
+        SLACK_SIGNING_SECRET: dummy
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
