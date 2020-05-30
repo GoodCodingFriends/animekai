@@ -14,4 +14,4 @@
 *.out
 
 bin
-statik
+statik/statik.go
