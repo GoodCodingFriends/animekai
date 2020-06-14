@@ -427,7 +427,18 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 		if e.NextEpisode.NextEpisode.ID == "" {
 			finished[e.Work.ID] = struct{}{}
 		}
-		if m[e.Work.ID].number < e.NextEpisode.Number {
+		// Number is empty.
+		if m[e.Work.ID].number == 0 && e.NextEpisode.Number == 0 {
+			if m[e.Work.ID].numberText < e.NextEpisode.NumberText {
+				m[e.Work.ID] = struct {
+					id         string
+					title      string
+					number     int
+					numberText string
+					workTitle  string
+				}{e.NextEpisode.ID, e.NextEpisode.Title, e.NextEpisode.Number, e.NextEpisode.NumberText, e.Work.Title}
+			}
+		} else if m[e.Work.ID].number < e.NextEpisode.Number {
 			m[e.Work.ID] = struct {
 				id         string
 				title      string
