@@ -3,26 +3,18 @@ package annict
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"sort"
 	"time"
 
 	"github.com/GoodCodingFriends/animekai/errors"
 	"github.com/GoodCodingFriends/animekai/resource"
+	"github.com/Yamashou/gqlgenc/client"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
-	"github.com/machinebox/graphql"
 	"github.com/morikuni/failure"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
-)
-
-// WorkState represents that viewer's state against to a work.
-type WorkState string
-
-const (
-	WorkStateAll      WorkState = "NO_STATE" // WorkStateAll represents watched and watching works.
-	WorkStateWatching WorkState = "WATCHING" // WorkStateWatching represents watching works.
-	WorkStateWatched  WorkState = "WATCHED"  // WorkStateWatched represents watched works.
 )
 
 type Service interface {
@@ -32,7 +24,7 @@ type Service interface {
 	// cursor is for paging, empty string if the first page.
 	ListWorks(
 		ctx context.Context,
-		state WorkState,
+		state StatusState,
 		cursor string,
 		limit int32,
 	) (_ []*resource.Work, nextCursor string, _ error)
@@ -40,15 +32,15 @@ type Service interface {
 	// If a created episode is the last episode, CreateNextEpisodeRecords marks the work state as WATCHED.
 	CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error)
 	// UpdateWorkStatus updates the work identified by work's ID to the passed work state.
-	UpdateWorkStatus(ctx context.Context, id int, state WorkState) error
+	UpdateWorkStatus(ctx context.Context, id int, state StatusState) error
 
 	// Stop stops the service.
 	Stop(ctx context.Context) error
 }
 
 type service struct {
-	token   string
-	invoker func(context.Context, *graphql.Request, interface{}) error
+	token  string
+	client *Client
 
 	ogImageFetcher *ogImageFetcher
 }
@@ -56,116 +48,57 @@ type service struct {
 func New(token, endpoint string) Service {
 	return &service{
 		token:          token,
-		invoker:        graphql.NewClient(endpoint).Run,
+		client:         &Client{client.NewClient(http.DefaultClient, endpoint)},
 		ogImageFetcher: newOGImageFetcher(),
 	}
 }
 
-const getProfileQuery = `
-query GetProfile {
-  viewer {
-    avatarUrl
-    recordsCount
-    wannaWatchCount
-    watchingCount
-    watchedCount
-  }
-}
-`
-
-var seasonToKanji = map[string]string{
-	"SPRING": "春",
-	"SUMMER": "夏",
-	"AUTUMN": "秋",
-	"WINTER": "冬",
+var seasonToKanji = map[SeasonName]string{
+	SeasonNameSpring: "春",
+	SeasonNameSummer: "夏",
+	SeasonNameAutumn: "秋",
+	SeasonNameWinter: "冬",
 }
 
 func (s *service) GetProfile(ctx context.Context) (*resource.Profile, error) {
-	var res struct {
-		Viewer struct {
-			AvatarURL       string
-			RecordsCount    int32
-			WannaWatchCount int32
-			WatchingCount   int32
-			WatchedCount    int32
-		}
-	}
-
-	req := graphql.NewRequest(getProfileQuery)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-
-	if err := s.invoker(ctx, req, &res); err != nil {
+	res, err := s.client.GetProfile(ctx)
+	if err != nil {
 		return nil, convertError(err)
 	}
 
 	v := res.Viewer
 
-	return &resource.Profile{
-		AvatarUrl:       v.AvatarURL,
-		RecordsCount:    v.RecordsCount,
-		WannaWatchCount: v.WannaWatchCount,
-		WatchingCount:   v.WatchingCount,
-		WatchedCount:    v.WatchedCount,
-	}, nil
+	p := &resource.Profile{
+		RecordsCount:    int32(v.RecordsCount),
+		WannaWatchCount: int32(v.WannaWatchCount),
+		WatchingCount:   int32(v.WatchingCount),
+		WatchedCount:    int32(v.WatchedCount),
+	}
+	if v.AvatarURL != nil {
+		p.AvatarUrl = *v.AvatarURL
+	}
+	return p, nil
 }
-
-const listWorksQuery = `
-query ListWorks($state: StatusState, $after: String, $n: Int!) {
-  viewer {
-    works(state: $state, after: $after, first: $n, orderBy: {direction: DESC, field: SEASON}) {
-      edges {
-        cursor
-        node {
-          title
-          annictId
-          seasonYear
-          seasonName
-          episodesCount
-          id
-          officialSiteUrl
-          wikipediaUrl
-          viewerStatusState
-        }
-      }
-    }
-  }
-}
-`
 
 //nolint:funlen
 func (s *service) ListWorks(
 	ctx context.Context,
-	state WorkState,
+	state StatusState,
 	cursor string,
 	limit int32,
 ) ([]*resource.Work, string, error) {
-	type work struct {
-		Cursor string
-		Node   struct {
-			WikipediaURL      string
-			Title             string
-			AnnictID          int32
-			SeasonYear        int32
-			SeasonName        string
-			EpisodesCount     int32
-			OfficialSiteURL   string
-			ViewerStatusState string
-		}
-	}
-	var res struct {
-		Viewer struct{ Works struct{ Edges []work } }
-	}
-
-	req := graphql.NewRequest(listWorksQuery)
-	if state != WorkStateAll {
-		req.Var("state", state)
+	var (
+		stateP *StatusState
+		after  *string
+	)
+	if state != StatusStateNoState {
+		stateP = &state
 	}
 	if cursor != "" {
-		req.Var("after", nil)
+		after = &cursor
 	}
-	req.Var("n", limit)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-	if err := s.invoker(ctx, req, &res); err != nil {
+	res, err := s.client.ListWorks(ctx, stateP, after, int64(limit))
+	if err != nil {
 		return nil, "", convertError(err)
 	}
 
@@ -195,26 +128,30 @@ func (s *service) ListWorks(
 		n := r.Node
 
 		var status resource.Work_Status
-		switch n.ViewerStatusState {
-		case "WATCHING":
+		switch *n.ViewerStatusState {
+		case StatusStateWatching:
 			status = resource.Work_WATCHING
-		case "WATCHED":
+		case StatusStateWatched:
 			status = resource.Work_WATCHED
 		}
 
 		res := &resource.Work{
-			Id:              n.AnnictID,
-			Title:           n.Title,
-			ReleasedOn:      fmt.Sprintf("%d %s", n.SeasonYear, seasonToKanji[n.SeasonName]),
-			EpisodesCount:   n.EpisodesCount,
-			OfficialSiteUrl: n.OfficialSiteURL,
-			WikipediaUrl:    n.WikipediaURL,
-			Status:          status,
+			Id:            int32(n.AnnictID),
+			Title:         n.Title,
+			ReleasedOn:    fmt.Sprintf("%d %s", n.SeasonYear, seasonToKanji[*n.SeasonName]),
+			EpisodesCount: int32(n.EpisodesCount),
+			Status:        status,
+		}
+		if n.OfficialSiteURL != nil {
+			res.OfficialSiteUrl = *n.OfficialSiteURL
+		}
+		if n.WikipediaURL != nil {
+			res.WikipediaUrl = *n.WikipediaURL
 		}
 		works = append(works, res)
 
 		eg.Go(func() error {
-			doneCh, err := s.ogImageFetcher.process(ctx, n.AnnictID)
+			doneCh, err := s.ogImageFetcher.process(ctx, res.Id)
 			if err != nil {
 				return failure.Wrap(err)
 			}
@@ -264,27 +201,6 @@ func (s *service) ListWorks(
 	return works, edges[len(edges)-1].Cursor, nil
 }
 
-const listRecordsQuery = `
-query listRecords {
-  viewer {
-    records {
-      edges {
-        node {
-          work {
-            title
-            episodesCount
-          }
-          episode {
-            sortNumber
-          }
-          createdAt
-        }
-      }
-    }
-  }
-}
-`
-
 var jst = time.FixedZone("Asia/Tokyo", 9*60*60)
 
 // TODO: Paging.
@@ -303,13 +219,8 @@ func (s *service) listRecords(ctx context.Context) (map[string]struct{ BeginTime
 		}
 	}
 
-	var res struct {
-		Viewer struct{ Records struct{ Edges []record } }
-	}
-
-	req := graphql.NewRequest(listRecordsQuery)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-	if err := s.invoker(ctx, req, &res); err != nil {
+	res, err := s.client.ListRecords(ctx)
+	if err != nil {
 		return nil, convertError(err)
 	}
 
@@ -323,64 +234,28 @@ func (s *service) listRecords(ctx context.Context) (map[string]struct{ BeginTime
 		w := r.Node.Work
 		_, ok := m[w.Title]
 		if !ok {
-			m[w.Title] = struct{ BeginTime, FinishTime time.Time }{
-				BeginTime: r.Node.CreatedAt.In(jst),
+			createdAt, err := time.Parse(time.RFC3339, r.Node.CreatedAt)
+			if err != nil {
+				return nil, convertError(err)
 			}
-		} else if w.EpisodesCount == r.Node.Episode.SortNumber || w.EpisodesCount == r.Node.Episode.Number { // TODO: Flaky.
+			m[w.Title] = struct{ BeginTime, FinishTime time.Time }{
+				BeginTime: createdAt.In(jst),
+			}
+		} else if w.EpisodesCount == r.Node.Episode.SortNumber || w.EpisodesCount == *r.Node.Episode.Number { // TODO: Flaky.
+			createdAt, err := time.Parse(time.RFC3339, r.Node.CreatedAt)
+			if err != nil {
+				return nil, convertError(err)
+			}
 			// Watched all episodes.
 			m[w.Title] = struct{ BeginTime, FinishTime time.Time }{
 				BeginTime:  m[w.Title].BeginTime,
-				FinishTime: r.Node.CreatedAt.In(jst),
+				FinishTime: createdAt.In(jst),
 			}
 		}
 	}
 
 	return m, nil
 }
-
-const listNextEpisodes = `
-query ListNextEpisodes {
-  viewer {
-    records {
-      edges {
-        node {
-          episode {
-            nextEpisode {
-              id
-              number
-              numberText
-              title
-              nextEpisode {
-                id
-              }
-            }
-            work {
-              id
-              title
-            }
-          }
-        }
-      }
-    }
-  }
-}
-`
-
-const createRecordMutation = `
-mutation CreateRecordMutation($episodeId: ID!) {
-  createRecord(input: {episodeId: $episodeId}) {
-    clientMutationId
-  }
-}
-`
-
-const updateStatusMutation = `
-mutation UpdateStatusMutation($state: StatusState!, $workId: ID!) {
-  updateStatus(input: {state: $state, workId: $workId}) {
-    clientMutationId
-  }
-}
-`
 
 func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error) { //nolint:funlen
 	type record struct {
@@ -403,14 +278,8 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 		}
 	}
 
-	var res struct {
-		Viewer struct{ Records struct{ Edges []record } }
-	}
-
-	req := graphql.NewRequest(listNextEpisodes)
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-
-	if err := s.invoker(ctx, req, &res); err != nil {
+	res, err := s.client.ListNextEpisodes(ctx)
+	if err != nil {
 		return nil, convertError(err)
 	}
 
@@ -428,24 +297,24 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 			finished[e.Work.ID] = struct{}{}
 		}
 		// Number is empty.
-		if m[e.Work.ID].number == 0 && e.NextEpisode.Number == 0 {
-			if m[e.Work.ID].numberText < e.NextEpisode.NumberText {
+		if m[e.Work.ID].number == 0 && (e.NextEpisode.Number == nil || *e.NextEpisode.Number == 0) {
+			if m[e.Work.ID].numberText < *e.NextEpisode.NumberText {
 				m[e.Work.ID] = struct {
 					id         string
 					title      string
 					number     int
 					numberText string
 					workTitle  string
-				}{e.NextEpisode.ID, e.NextEpisode.Title, e.NextEpisode.Number, e.NextEpisode.NumberText, e.Work.Title}
+				}{e.NextEpisode.ID, *e.NextEpisode.Title, int(*e.NextEpisode.Number), *e.NextEpisode.NumberText, e.Work.Title}
 			}
-		} else if m[e.Work.ID].number < e.NextEpisode.Number {
+		} else if m[e.Work.ID].number < int(*e.NextEpisode.Number) {
 			m[e.Work.ID] = struct {
 				id         string
 				title      string
 				number     int
 				numberText string
 				workTitle  string
-			}{e.NextEpisode.ID, e.NextEpisode.Title, e.NextEpisode.Number, e.NextEpisode.NumberText, e.Work.Title}
+			}{e.NextEpisode.ID, *e.NextEpisode.Title, int(*e.NextEpisode.Number), *e.NextEpisode.NumberText, e.Work.Title}
 		}
 	}
 
@@ -453,11 +322,8 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 	for _, e := range m {
 		e := e
 		eg.Go(func() error {
-			req := graphql.NewRequest(createRecordMutation)
-			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-			req.Var("episodeId", e.id)
-
-			if err := s.invoker(ctx, req, struct{}{}); err != nil {
+			_, err := s.client.CreateRecordMutation(ctx, e.id)
+			if err != nil {
 				return failure.Wrap(convertError(err), failure.Context{"episode_id": e.id})
 			}
 			return nil
@@ -466,12 +332,8 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 	for workID := range finished {
 		workID := workID
 		eg.Go(func() error {
-			req := graphql.NewRequest(updateStatusMutation)
-			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-			req.Var("state", WorkStateWatched)
-			req.Var("workId", workID)
-
-			if err := s.invoker(ctx, req, struct{}{}); err != nil {
+			_, err := s.client.UpdateStatusMutation(ctx, StatusStateWatched, workID)
+			if err != nil {
 				return failure.Wrap(convertError(err), failure.Context{"work_id": workID})
 			}
 			return nil
@@ -494,68 +356,19 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 	return episodes, nil
 }
 
-const getWorkQuery = `
-query GetWork($ids: [Int!]) {
-  searchWorks(annictIds: $ids) {
-    edges {
-      node {
-        id
-        title
-        episodes(first: 1, orderBy: {direction: ASC, field: SORT_NUMBER}) {
-          nodes {
-            id
-          }
-        }
-      }
-    }
-  }
-}
-`
-
-const updateWorkStatusMutation = `
-mutation UpdateWorkStatus($workId: ID!){
-  updateStatus(input:{state: WATCHING, workId: $workId}) {
-    clientMutationId
-  }
-}
-`
-
-func (s *service) UpdateWorkStatus(ctx context.Context, workID int, state WorkState) error {
-	var res struct {
-		SearchWorks struct {
-			Edges []struct {
-				Node struct {
-					ID       string
-					Episodes struct {
-						Nodes []struct {
-							ID string
-						}
-					}
-				}
-			}
-		}
-	}
-
-	req := graphql.NewRequest(getWorkQuery)
-	req.Var("ids", []int{workID})
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-	if err := s.invoker(ctx, req, &res); err != nil {
+func (s *service) UpdateWorkStatus(ctx context.Context, workID int, state StatusState) error {
+	res, err := s.client.GetWork(ctx, []int64{int64(workID)})
+	if err != nil {
 		return convertError(err)
 	}
 
 	var eg errgroup.Group
 	eg.Go(func() error {
-		r := graphql.NewRequest(updateWorkStatusMutation)
-		r.Var("workId", res.SearchWorks.Edges[0].Node.ID)
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-		err := s.invoker(ctx, r, &res)
+		_, err := s.client.UpdateWorkStatus(ctx, res.SearchWorks.Edges[0].Node.ID)
 		return convertError(err)
 	})
 	eg.Go(func() error {
-		r := graphql.NewRequest(createRecordMutation)
-		r.Var("episodeId", res.SearchWorks.Edges[0].Node.Episodes.Nodes[0].ID)
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token))
-		err := s.invoker(ctx, r, &res)
+		_, err := s.client.CreateRecordMutation(ctx, res.SearchWorks.Edges[0].Node.Episodes.Nodes[0].ID)
 		return convertError(err)
 	})
 	if err := eg.Wait(); err != nil {

@@ -1,0 +1,19 @@
+query listRecords {
+  viewer {
+    records {
+      edges {
+        node {
+          work {
+            title
+            episodesCount
+          }
+          episode {
+            sortNumber
+            number
+          }
+          createdAt
+        }
+      }
+    }
+  }
+}
