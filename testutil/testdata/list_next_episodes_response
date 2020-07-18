@@ -10,9 +10,14 @@
                   "id": "RXBpc29kZS0xNDIyOA==",
                   "number": 2,
                   "sortNumber": 20,
-                  "title": "ろうたけたる思い"
+                  "numberText": "第二話",
+                  "title": "ろうたけたる思い",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNDMxMw=="
+                  }
                 },
                 "work": {
+                  "id": "V29yay00MTYy",
                   "title": "結城友奈は勇者である"
                 }
               }
@@ -25,39 +30,14 @@
                   "id": "RXBpc29kZS0xNDMxMw==",
                   "number": 3,
                   "sortNumber": 30,
-                  "title": "風格ある振る舞い"
+                  "numberText": "第三話",
+                  "title": "風格ある振る舞い",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNDQwNw=="
+                  }
                 },
                 "work": {
-                  "title": "結城友奈は勇者である"
-                }
-              }
-            }
-          },
-          {
-            "node": {
-              "episode": {
-                "nextEpisode": {
-                  "id": "RXBpc29kZS02NTY1",
-                  "number": 2,
-                  "sortNumber": 2,
-                  "title": "旋律の…聖調理人（プリーステス）"
-                },
-                "work": {
-                  "title": "中二病でも恋がしたい！"
-                }
-              }
-            }
-          },
-          {
-            "node": {
-              "episode": {
-                "nextEpisode": {
-                  "id": "RXBpc29kZS0xNDIyOA==",
-                  "number": 2,
-                  "sortNumber": 20,
-                  "title": "ろうたけたる思い"
-                },
-                "work": {
+                  "id": "V29yay00MTYy",
                   "title": "結城友奈は勇者である"
                 }
               }
@@ -70,9 +50,572 @@
                   "id": "RXBpc29kZS02NTY2",
                   "number": 3,
                   "sortNumber": 3,
-                  "title": "異端なる…双尾娘（ツインテール）"
+                  "numberText": "Episode III",
+                  "title": "異端なる…双尾娘（ツインテール）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTY3"
+                  }
                 },
                 "work": {
+                  "id": "V29yay0xMjc2",
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDgzMw==",
+                  "number": 8,
+                  "sortNumber": 80,
+                  "numberText": "第八話",
+                  "title": "神の祝福",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNDk4Nw=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDQwNw==",
+                  "number": 4,
+                  "sortNumber": 40,
+                  "numberText": "第四話",
+                  "title": "輝く心",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNDQ4OQ=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDQ4OQ==",
+                  "number": 5,
+                  "sortNumber": 50,
+                  "numberText": "第五話",
+                  "title": "困難に打ち勝つ",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNDU4OA=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDU4OA==",
+                  "number": 6,
+                  "sortNumber": 60,
+                  "numberText": "第六話",
+                  "title": "明日に期待して",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNDY5MA=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDY5MA==",
+                  "number": 7,
+                  "sortNumber": 70,
+                  "numberText": "第七話",
+                  "title": "牧歌的な喜び",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNDgzMw=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY1",
+                  "number": 2,
+                  "sortNumber": 2,
+                  "numberText": "Episode II",
+                  "title": "旋律の…聖調理人（プリーステス）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTY2"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTMz",
+                  "number": null,
+                  "sortNumber": 2,
+                  "numberText": "第2話",
+                  "title": "信じて送り出したお兄さんが携帯美少女ゲームにドハマリして セクハラしてくるようになるわけがない",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTM0"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU2",
+                  "number": 17,
+                  "sortNumber": 17,
+                  "numberText": "第17回",
+                  "title": "夏時間",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNDU3"
+                  }
+                },
+                "work": {
+                  "id": "V29yay02MTU=",
+                  "title": "CLANNAD～AFTER STORY～"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY3",
+                  "number": 4,
+                  "sortNumber": 4,
+                  "numberText": "Episode IV",
+                  "title": "痛恨の…闇聖典（マビノギオン）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTY4"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU3",
+                  "number": 18,
+                  "sortNumber": 18,
+                  "numberText": "第18回",
+                  "title": "大地の果て",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNDU4"
+                  }
+                },
+                "work": {
+                  "id": "V29yay02MTU=",
+                  "title": "CLANNAD～AFTER STORY～"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM0",
+                  "number": null,
+                  "sortNumber": 3,
+                  "numberText": "第3話",
+                  "title": "俺の友達が眼鏡を外すわけがない",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTM1"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU4",
+                  "number": 19,
+                  "sortNumber": 19,
+                  "numberText": "第19回",
+                  "title": "家路",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNDU5"
+                  }
+                },
+                "work": {
+                  "id": "V29yay02MTU=",
+                  "title": "CLANNAD～AFTER STORY～"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDk4Nw==",
+                  "number": 9,
+                  "sortNumber": 90,
+                  "numberText": "第九話",
+                  "title": "心の痛みを判る人",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNTEyOQ=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY4",
+                  "number": 5,
+                  "sortNumber": 5,
+                  "numberText": "Episode V",
+                  "title": "束縛の…十字架（ハード・スタディ）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTY5"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM1",
+                  "number": null,
+                  "sortNumber": 4,
+                  "numberText": "第4話",
+                  "title": "俺の妹のライバルが来日するわけがない",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTM2"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNTEyOQ==",
+                  "number": 10,
+                  "sortNumber": 100,
+                  "numberText": "第十話",
+                  "title": "愛情の絆",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNTI4Mw=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY5",
+                  "number": 6,
+                  "sortNumber": 6,
+                  "numberText": "Episode VI",
+                  "title": "贖罪の…救世主（イノセント）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTcw"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM2",
+                  "number": null,
+                  "sortNumber": 5,
+                  "numberText": "第5話",
+                  "title": "俺が妹の彼氏なわけがないし、俺の妹に彼氏がいるわけがない",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTM3"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU5",
+                  "number": 20,
+                  "sortNumber": 20,
+                  "numberText": "第20回",
+                  "title": "汐風の戯れ",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNDYw"
+                  }
+                },
+                "work": {
+                  "id": "V29yay02MTU=",
+                  "title": "CLANNAD～AFTER STORY～"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNTI4Mw==",
+                  "number": 11,
+                  "sortNumber": 110,
+                  "numberText": "第十一話",
+                  "title": "情熱",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0xNTQxMA=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcw",
+                  "number": 7,
+                  "sortNumber": 7,
+                  "numberText": "Episode VII",
+                  "title": "追憶の…楽園喪失（パラダイス・ロスト）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTcx"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM3",
+                  "number": null,
+                  "sortNumber": 6,
+                  "numberText": "第6話",
+                  "title": "俺の妹が家に彼氏をつれてくるわけがない",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTM4"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDYw",
+                  "number": 21,
+                  "sortNumber": 21,
+                  "numberText": "第21回",
+                  "title": "世界の終わり",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNDYx"
+                  }
+                },
+                "work": {
+                  "id": "V29yay02MTU=",
+                  "title": "CLANNAD～AFTER STORY～"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM4",
+                  "number": null,
+                  "sortNumber": 7,
+                  "numberText": "第7話",
+                  "title": "俺が後輩と恋人同士になるわけがない",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTM5"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcx",
+                  "number": 8,
+                  "sortNumber": 8,
+                  "numberText": "Episode VIII",
+                  "title": "二人だけの…逃避行（エグザイル）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTcy"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
+                  "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDYx",
+                  "number": 22,
+                  "sortNumber": 22,
+                  "numberText": "最終回",
+                  "title": "小さな手のひら",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNDYy"
+                  }
+                },
+                "work": {
+                  "id": "V29yay02MTU=",
+                  "title": "CLANNAD～AFTER STORY～"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNTQxMA==",
+                  "number": 12,
+                  "sortNumber": 120,
+                  "numberText": "第十二話",
+                  "title": "貴方に微笑む",
+                  "nextEpisode": null
+                },
+                "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcy",
+                  "number": 9,
+                  "sortNumber": 9,
+                  "numberText": "Episode IX",
+                  "title": "混沌の…初恋煩（カオス・ハート）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTcz"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
                   "title": "中二病でも恋がしたい！"
                 }
               }
@@ -83,7 +626,128 @@
               "episode": {
                 "nextEpisode": null,
                 "work": {
+                  "id": "V29yay00MTYy",
+                  "title": "結城友奈は勇者である"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDYy",
+                  "number": null,
+                  "sortNumber": 23,
+                  "numberText": "番外編",
+                  "title": "一年前の出来事",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNDYz"
+                  }
+                },
+                "work": {
+                  "id": "V29yay02MTU=",
+                  "title": "CLANNAD～AFTER STORY～"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM5",
+                  "number": null,
+                  "sortNumber": 8,
+                  "numberText": "第8話",
+                  "title": "俺が後輩とひと夏の思い出を作るわけがない",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTQw"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNTg0",
+                  "number": null,
+                  "sortNumber": 2,
+                  "numberText": "#02",
+                  "title": "成しうる者",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS0zNTg1"
+                  }
+                },
+                "work": {
+                  "id": "V29yay03OTI=",
+                  "title": "PSYCHO-PASS サイコパス"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTQw",
+                  "number": null,
+                  "sortNumber": 9,
+                  "numberText": "第9話",
+                  "title": "俺の妹がこんなに可愛いわけがない!",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTQx"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0zMzk=",
+                  "title": "俺の妹がこんなに可愛いわけがない。"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcz",
+                  "number": 10,
+                  "sortNumber": 10,
+                  "numberText": "Episode X",
+                  "title": "聖母の…弁当箱（パンドラズ・ボックス）",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS02NTc0"
+                  }
+                },
+                "work": {
+                  "id": "V29yay0xMjc2",
                   "title": "中二病でも恋がしたい！"
+                }
+              }
+            }
+          },
+          {
+            "node": {
+              "episode": {
+                "nextEpisode": {
+                  "id": "RXBpc29kZS05Mzk5NA==",
+                  "number": 2,
+                  "sortNumber": 20,
+                  "numberText": "鷲尾須美の章 第二話",
+                  "title": "ともだち",
+                  "nextEpisode": {
+                    "id": "RXBpc29kZS05NDE3MQ=="
+                  }
+                },
+                "work": {
+                  "id": "V29yay01Mjc0",
+                  "title": "結城友奈は勇者である -鷲尾須美の章-/-勇者の章-"
                 }
               }
             }

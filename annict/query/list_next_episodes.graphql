@@ -7,6 +7,7 @@ query ListNextEpisodes {
             nextEpisode {
               id
               number
+              sortNumber
               numberText
               title
               nextEpisode {

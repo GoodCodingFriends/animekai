@@ -122,7 +122,7 @@ func add(ctx context.Context, annictService annict.Service, args []string) error
 		return failure.Wrap(err, failure.Context{"work_id": args[0]})
 	}
 
-	if err := annictService.UpdateWorkStatus(ctx, workID, annict.WorkStateWatching); err != nil {
+	if err := annictService.UpdateWorkStatus(ctx, workID, annict.StatusStateWatching); err != nil {
 		return failure.Wrap(err)
 	}
 	return nil

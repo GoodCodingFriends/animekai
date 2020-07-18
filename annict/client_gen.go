@@ -43,6 +43,7 @@ type ListNextEpisodes struct {
 						NextEpisode *struct {
 							ID          string
 							Number      *int64
+							SortNumber  int64
 							NumberText  *string
 							Title       *string
 							NextEpisode *struct{ ID string }
@@ -184,6 +185,7 @@ const ListNextEpisodesQuery = `query ListNextEpisodes {
 						nextEpisode {
 							id
 							number
+							sortNumber
 							numberText
 							title
 							nextEpisode {

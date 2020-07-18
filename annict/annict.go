@@ -205,20 +205,6 @@ var jst = time.FixedZone("Asia/Tokyo", 9*60*60)
 
 // TODO: Paging.
 func (s *service) listRecords(ctx context.Context) (map[string]struct{ BeginTime, FinishTime time.Time }, error) {
-	type record struct {
-		Node struct {
-			Work struct {
-				Title         string
-				EpisodesCount int
-			}
-			Episode struct {
-				SortNumber int
-				Number     int
-			}
-			CreatedAt time.Time
-		}
-	}
-
 	res, err := s.client.ListRecords(ctx)
 	if err != nil {
 		return nil, convertError(err)
@@ -241,7 +227,7 @@ func (s *service) listRecords(ctx context.Context) (map[string]struct{ BeginTime
 			m[w.Title] = struct{ BeginTime, FinishTime time.Time }{
 				BeginTime: createdAt.In(jst),
 			}
-		} else if w.EpisodesCount == r.Node.Episode.SortNumber || w.EpisodesCount == *r.Node.Episode.Number { // TODO: Flaky.
+		} else if w.EpisodesCount == r.Node.Episode.SortNumber || (r.Node.Episode.Number != nil && w.EpisodesCount == *r.Node.Episode.Number) { // TODO: Flaky.
 			createdAt, err := time.Parse(time.RFC3339, r.Node.CreatedAt)
 			if err != nil {
 				return nil, convertError(err)
@@ -258,26 +244,6 @@ func (s *service) listRecords(ctx context.Context) (map[string]struct{ BeginTime
 }
 
 func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Episode, error) { //nolint:funlen
-	type record struct {
-		Node struct {
-			Episode struct {
-				NextEpisode struct {
-					ID          string // Required to create next record.
-					Number      int    // Required to compare two records.
-					NumberText  string
-					Title       string
-					NextEpisode struct {
-						ID string // Required to check NextEpisode is the last episode.
-					}
-				}
-				Work struct {
-					ID    string // Required to mark completed work as WATCHED.
-					Title string
-				}
-			}
-		}
-	}
-
 	res, err := s.client.ListNextEpisodes(ctx)
 	if err != nil {
 		return nil, convertError(err)
@@ -287,34 +253,36 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 	m := map[string]struct {
 		id         string
 		title      string
-		number     int
+		number     int64
 		numberText string
 		workTitle  string
 	}{}
+
 	for _, r := range res.Viewer.Records.Edges {
 		e := r.Node.Episode
-		if e.NextEpisode.NextEpisode.ID == "" {
+		if e.NextEpisode == nil {
 			finished[e.Work.ID] = struct{}{}
+			continue
 		}
-		// Number is empty.
-		if m[e.Work.ID].number == 0 && (e.NextEpisode.Number == nil || *e.NextEpisode.Number == 0) {
-			if m[e.Work.ID].numberText < *e.NextEpisode.NumberText {
-				m[e.Work.ID] = struct {
-					id         string
-					title      string
-					number     int
-					numberText string
-					workTitle  string
-				}{e.NextEpisode.ID, *e.NextEpisode.Title, int(*e.NextEpisode.Number), *e.NextEpisode.NumberText, e.Work.Title}
-			}
-		} else if m[e.Work.ID].number < int(*e.NextEpisode.Number) {
-			m[e.Work.ID] = struct {
+
+		if m[e.Work.ID].number < e.NextEpisode.SortNumber {
+			s := struct {
 				id         string
 				title      string
-				number     int
+				number     int64
 				numberText string
 				workTitle  string
-			}{e.NextEpisode.ID, *e.NextEpisode.Title, int(*e.NextEpisode.Number), *e.NextEpisode.NumberText, e.Work.Title}
+			}{
+				e.NextEpisode.ID,
+				*e.NextEpisode.Title,
+				e.NextEpisode.SortNumber,
+				*e.NextEpisode.NumberText,
+				e.Work.Title,
+			}
+			if e.NextEpisode.Title != nil {
+				s.title = *e.NextEpisode.Title
+			}
+			m[e.Work.ID] = s
 		}
 	}
 
