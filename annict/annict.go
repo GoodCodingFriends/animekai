@@ -3,7 +3,6 @@ package annict
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"sort"
 	"time"
@@ -294,7 +293,6 @@ func (s *service) CreateNextEpisodeRecords(ctx context.Context) ([]*resource.Epi
 	for _, e := range m {
 		e := e
 		eg.Go(func() error {
-			log.Println(e.title)
 			_, err := s.client.CreateRecordMutation(ctx, e.id)
 			if err != nil {
 				return failure.Wrap(convertError(err), failure.Context{"episode_id": e.id})
