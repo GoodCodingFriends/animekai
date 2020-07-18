@@ -24,5 +24,3 @@ require (
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.23.0
 )
-
-replace github.com/nametake/protoc-gen-gohttp => github.com/ktr0731/protoc-gen-gohttp v1.1.1-0.20200711155709-7f5687c95bf3
