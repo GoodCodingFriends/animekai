@@ -1,0 +1,9 @@
+query GetProfile {
+  viewer {
+    avatarUrl
+    recordsCount
+    wannaWatchCount
+    watchingCount
+    watchedCount
+  }
+}

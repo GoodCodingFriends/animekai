@@ -10,6 +10,10 @@ proto:
 	protoc --go_opt=paths=source_relative -I proto -I $(GOPATH)/src/github.com/protocolbuffers/protobuf/src/ -I $(GOPATH)/src/github.com/googleapis/googleapis --go_out=plugins=grpc:api --gohttp_out=api proto/api.proto
 	protoc --go_opt=paths=source_relative -I proto -I $(GOPATH)/src/github.com/protocolbuffers/protobuf/src/ -I $(GOPATH)/src/github.com/googleapis/googleapis --go_out=resource proto/resource.proto
 
+.PHONY: graphql
+graphql:
+	gqlgenc
+
 .PHONY: tools
 tools:
 	GOBIN=$(PWD)/bin go install -mod readonly $(TOOLS)

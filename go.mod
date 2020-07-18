@@ -3,6 +3,7 @@ module github.com/GoodCodingFriends/animekai
 go 1.14
 
 require (
+	github.com/Yamashou/gqlgenc v0.0.0-20200621140742-91992b63da43
 	github.com/golang/protobuf v1.4.2
 	github.com/golangci/golangci-lint v1.27.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
@@ -25,3 +26,5 @@ require (
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.25.0
 )
+
+replace github.com/nametake/protoc-gen-gohttp => github.com/ktr0731/protoc-gen-gohttp v1.1.1-0.20200711155709-7f5687c95bf3

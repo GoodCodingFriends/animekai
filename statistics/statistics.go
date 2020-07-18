@@ -52,7 +52,7 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 		return nil
 	})
 	eg.Go(func() error {
-		w, _, err := s.annict.ListWorks(ctx, annict.WorkStateWatching, "", 100)
+		w, _, err := s.annict.ListWorks(ctx, annict.StatusStateWatching, "", 100)
 		if err != nil {
 			return failure.Wrap(err)
 		}
@@ -60,7 +60,7 @@ func (s *service) GetDashboard(ctx context.Context, req *api.GetDashboardRequest
 		return nil
 	})
 	eg.Go(func() error {
-		w, cursor, err := s.annict.ListWorks(ctx, annict.WorkStateWatched, "", req.WorkPageSize)
+		w, cursor, err := s.annict.ListWorks(ctx, annict.StatusStateWatched, "", req.WorkPageSize)
 		if err != nil {
 			return failure.Wrap(err)
 		}
@@ -87,14 +87,14 @@ func (s *service) ListWorks(ctx context.Context, req *api.ListWorksRequest) (*ap
 		return nil, failure.Wrap(err)
 	}
 
-	var state annict.WorkState
+	var state annict.StatusState
 	switch req.State {
 	case api.WorkState_WATCHING:
-		state = "WATCHING"
+		state = annict.StatusStateWatching
 	case api.WorkState_WATCHED:
-		state = "WATCHED"
+		state = annict.StatusStateWatched
 	default:
-		state = "NO_STATE"
+		state = annict.StatusStateNoState
 	}
 	works, nextPageToken, err := s.annict.ListWorks(ctx, state, req.PageToken, req.PageSize)
 	if err != nil {

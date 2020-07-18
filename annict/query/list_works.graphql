@@ -1,0 +1,20 @@
+query ListWorks($state: StatusState, $after: String, $n: Int!) {
+  viewer {
+    works(state: $state, after: $after, first: $n, orderBy: {direction: DESC, field: SEASON}) {
+      edges {
+        cursor
+        node {
+          title
+          annictId
+          seasonYear
+          seasonName
+          episodesCount
+          id
+          officialSiteUrl
+          wikipediaUrl
+          viewerStatusState
+        }
+      }
+    }
+  }
+}

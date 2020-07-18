@@ -1,0 +1,26 @@
+query ListNextEpisodes {
+  viewer {
+    records {
+      edges {
+        node {
+          episode {
+            nextEpisode {
+              id
+              number
+              sortNumber
+              numberText
+              title
+              nextEpisode {
+                id
+              }
+            }
+            work {
+              id
+              title
+            }
+          }
+        }
+      }
+    }
+  }
+}

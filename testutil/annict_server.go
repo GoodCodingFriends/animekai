@@ -53,10 +53,9 @@ func RunAnnictServer(t testing.T, codeDecider map[string]int) (addr string) {
 			copyFile(t, w, "list_records_response")
 		case strings.Contains(s, "ListNextEpisodes"):
 			copyFile(t, w, "list_next_episodes_response")
-
 		case strings.Contains(s, "CreateRecordMutation"),
 			strings.Contains(s, "UpdateStatusMutation"):
-			if _, err := io.WriteString(w, "{}"); err != nil {
+			if _, err := io.WriteString(w, `{"data": {}}`); err != nil {
 				t.Fatal(err)
 			}
 		default:

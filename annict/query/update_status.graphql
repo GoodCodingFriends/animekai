@@ -1,0 +1,5 @@
+mutation UpdateStatusMutation($state: StatusState!, $workId: ID!) {
+  updateStatus(input: {state: $state, workId: $workId}) {
+    clientMutationId
+  }
+}

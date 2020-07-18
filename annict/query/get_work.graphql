@@ -1,0 +1,15 @@
+query GetWork($ids: [Int!]) {
+  searchWorks(annictIds: $ids) {
+    edges {
+      node {
+        id
+        title
+        episodes(first: 1, orderBy: {direction: ASC, field: SORT_NUMBER}) {
+          nodes {
+            id
+          }
+        }
+      }
+    }
+  }
+}
