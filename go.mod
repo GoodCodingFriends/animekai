@@ -13,7 +13,7 @@ require (
 	github.com/matryer/is v1.3.0 // indirect
 	github.com/mitchellh/go-testing-interface v1.14.1
 	github.com/morikuni/failure v0.12.1
-	github.com/nametake/protoc-gen-gohttp v1.1.0
+	github.com/nametake/protoc-gen-gohttp v1.2.0
 	github.com/rakyll/statik v0.1.7
 	github.com/rs/cors v1.7.0
 	github.com/slack-go/slack v0.6.4
@@ -21,6 +21,7 @@ require (
 	go.uber.org/zap v1.15.0
 	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2
 	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
+	google.golang.org/genproto v0.0.0-20200715011427-11fb19a81f2c // indirect
 	google.golang.org/grpc v1.29.1
-	google.golang.org/protobuf v1.23.0
+	google.golang.org/protobuf v1.25.0
 )
