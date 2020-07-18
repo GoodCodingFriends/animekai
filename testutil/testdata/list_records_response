@@ -6,10 +6,15 @@
           {
             "node": {
               "work": {
-                "title": "結城友奈は勇者である"
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
               },
               "episode": {
-                "sortNumber": 10
+                "sortNumber": 10,
+                "number": 1,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDIyOA=="
+                }
               },
               "createdAt": "2020-05-19T16:49:01Z"
             }
@@ -17,10 +22,15 @@
           {
             "node": {
               "work": {
-                "title": "結城友奈は勇者である"
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
               },
               "episode": {
-                "sortNumber": 20
+                "sortNumber": 20,
+                "number": 2,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDMxMw=="
+                }
               },
               "createdAt": "2020-05-19T16:49:50Z"
             }
@@ -28,12 +38,575 @@
           {
             "node": {
               "work": {
-                "title": "中二病でも恋がしたい！"
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
               },
               "episode": {
-                "sortNumber": 1
+                "sortNumber": 2,
+                "number": 2,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY2"
+                }
               },
-              "createdAt": "2020-05-23T07:35:14Z"
+              "createdAt": "2020-05-23T12:25:15Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 70,
+                "number": 7,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDgzMw=="
+                }
+              },
+              "createdAt": "2020-05-24T02:32:02Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 30,
+                "number": 3,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDQwNw=="
+                }
+              },
+              "createdAt": "2020-05-24T02:19:56Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 40,
+                "number": 4,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDQ4OQ=="
+                }
+              },
+              "createdAt": "2020-05-24T02:20:20Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 50,
+                "number": 5,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDU4OA=="
+                }
+              },
+              "createdAt": "2020-05-24T02:21:23Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 60,
+                "number": 6,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDY5MA=="
+                }
+              },
+              "createdAt": "2020-05-24T02:27:40Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 1,
+                "number": 1,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY1"
+                }
+              },
+              "createdAt": "2020-05-24T02:33:36Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 1,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTMz"
+                }
+              },
+              "createdAt": "2020-05-24T03:43:35Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "CLANNAD～AFTER STORY～",
+                "episodesCount": 25
+              },
+              "episode": {
+                "sortNumber": 16,
+                "number": 16,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU2"
+                }
+              },
+              "createdAt": "2020-05-24T03:46:39Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 3,
+                "number": 3,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY3"
+                }
+              },
+              "createdAt": "2020-05-30T10:18:45Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "CLANNAD～AFTER STORY～",
+                "episodesCount": 25
+              },
+              "episode": {
+                "sortNumber": 17,
+                "number": 17,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU3"
+                }
+              },
+              "createdAt": "2020-05-30T10:18:45Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 2,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM0"
+                }
+              },
+              "createdAt": "2020-05-30T10:22:30Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "CLANNAD～AFTER STORY～",
+                "episodesCount": 25
+              },
+              "episode": {
+                "sortNumber": 18,
+                "number": 18,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU4"
+                }
+              },
+              "createdAt": "2020-06-06T10:30:39Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 80,
+                "number": 8,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNDk4Nw=="
+                }
+              },
+              "createdAt": "2020-06-06T10:30:39Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 4,
+                "number": 4,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY4"
+                }
+              },
+              "createdAt": "2020-06-06T10:30:39Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 3,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM1"
+                }
+              },
+              "createdAt": "2020-06-06T10:35:51Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 90,
+                "number": 9,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNTEyOQ=="
+                }
+              },
+              "createdAt": "2020-06-14T09:54:04Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 5,
+                "number": 5,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTY5"
+                }
+              },
+              "createdAt": "2020-06-14T09:54:04Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 4,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM2"
+                }
+              },
+              "createdAt": "2020-06-14T09:54:05Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "CLANNAD～AFTER STORY～",
+                "episodesCount": 25
+              },
+              "episode": {
+                "sortNumber": 19,
+                "number": 19,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDU5"
+                }
+              },
+              "createdAt": "2020-06-14T09:54:04Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 100,
+                "number": 10,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNTI4Mw=="
+                }
+              },
+              "createdAt": "2020-06-22T10:12:37Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 6,
+                "number": 6,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcw"
+                }
+              },
+              "createdAt": "2020-06-22T10:12:37Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 5,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM3"
+                }
+              },
+              "createdAt": "2020-06-22T10:12:38Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "CLANNAD～AFTER STORY～",
+                "episodesCount": 25
+              },
+              "episode": {
+                "sortNumber": 20,
+                "number": 20,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDYw"
+                }
+              },
+              "createdAt": "2020-06-22T10:12:37Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 6,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM4"
+                }
+              },
+              "createdAt": "2020-06-30T10:16:09Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 7,
+                "number": 7,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcx"
+                }
+              },
+              "createdAt": "2020-06-30T10:16:09Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "CLANNAD～AFTER STORY～",
+                "episodesCount": 25
+              },
+              "episode": {
+                "sortNumber": 21,
+                "number": 21,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDYx"
+                }
+              },
+              "createdAt": "2020-06-30T10:16:09Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 110,
+                "number": 11,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0xNTQxMA=="
+                }
+              },
+              "createdAt": "2020-06-30T10:16:09Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 8,
+                "number": 8,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcy"
+                }
+              },
+              "createdAt": "2020-07-04T11:04:21Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である",
+                "episodesCount": 12
+              },
+              "episode": {
+                "sortNumber": 120,
+                "number": 12,
+                "nextEpisode": null
+              },
+              "createdAt": "2020-07-04T11:04:20Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "CLANNAD～AFTER STORY～",
+                "episodesCount": 25
+              },
+              "episode": {
+                "sortNumber": 22,
+                "number": 22,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNDYy"
+                }
+              },
+              "createdAt": "2020-07-04T11:04:21Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 7,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTM5"
+                }
+              },
+              "createdAt": "2020-07-04T11:04:21Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "PSYCHO-PASS サイコパス",
+                "episodesCount": 22
+              },
+              "episode": {
+                "sortNumber": 1,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS0zNTg0"
+                }
+              },
+              "createdAt": "2020-07-04T13:31:20Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "俺の妹がこんなに可愛いわけがない。",
+                "episodesCount": 16
+              },
+              "episode": {
+                "sortNumber": 8,
+                "number": null,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTQw"
+                }
+              },
+              "createdAt": "2020-07-12T10:17:23Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "中二病でも恋がしたい！",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 9,
+                "number": 9,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS02NTcz"
+                }
+              },
+              "createdAt": "2020-07-12T10:17:21Z"
+            }
+          },
+          {
+            "node": {
+              "work": {
+                "title": "結城友奈は勇者である -鷲尾須美の章-/-勇者の章-",
+                "episodesCount": 13
+              },
+              "episode": {
+                "sortNumber": 10,
+                "number": 1,
+                "nextEpisode": {
+                  "id": "RXBpc29kZS05Mzk5NA=="
+                }
+              },
+              "createdAt": "2020-07-12T11:22:39Z"
             }
           }
         ]

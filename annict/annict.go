@@ -227,7 +227,7 @@ func (s *service) listRecords(ctx context.Context) (map[string]struct{ BeginTime
 			m[w.Title] = struct{ BeginTime, FinishTime time.Time }{
 				BeginTime: createdAt.In(jst),
 			}
-		} else if w.EpisodesCount == r.Node.Episode.SortNumber || (r.Node.Episode.Number != nil && w.EpisodesCount == *r.Node.Episode.Number) { // TODO: Flaky.
+		} else if r.Node.Episode.NextEpisode == nil {
 			createdAt, err := time.Parse(time.RFC3339, r.Node.CreatedAt)
 			if err != nil {
 				return nil, convertError(err)

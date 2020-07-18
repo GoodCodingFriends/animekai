@@ -10,6 +10,9 @@ query listRecords {
           episode {
             sortNumber
             number
+            nextEpisode {
+              id
+            }
           }
           createdAt
         }

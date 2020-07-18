@@ -69,8 +69,9 @@ type ListRecords struct {
 						EpisodesCount int64
 					}
 					Episode struct {
-						SortNumber int64
-						Number     *int64
+						SortNumber  int64
+						Number      *int64
+						NextEpisode *struct{ ID string }
 					}
 					CreatedAt string
 				}
@@ -229,6 +230,9 @@ const ListRecordsQuery = `query listRecords {
 					episode {
 						sortNumber
 						number
+						nextEpisode {
+							id
+						}
 					}
 					createdAt
 				}
