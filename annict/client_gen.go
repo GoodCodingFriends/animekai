@@ -49,8 +49,9 @@ type ListNextEpisodes struct {
 							NextEpisode *struct{ ID string }
 						}
 						Work struct {
-							ID    string
-							Title string
+							ID                string
+							Title             string
+							ViewerStatusState *StatusState
 						}
 					}
 				}
@@ -195,6 +196,7 @@ const ListNextEpisodesQuery = `query ListNextEpisodes {
 						work {
 							id
 							title
+							viewerStatusState
 						}
 					}
 				}

@@ -17,6 +17,7 @@ query ListNextEpisodes {
             work {
               id
               title
+              viewerStatusState
             }
           }
         }
