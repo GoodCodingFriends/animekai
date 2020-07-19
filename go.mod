@@ -3,7 +3,8 @@ module github.com/GoodCodingFriends/animekai
 go 1.14
 
 require (
-	github.com/Yamashou/gqlgenc v0.0.0-20200621140742-91992b63da43
+	github.com/Yamashou/gqlgenc v0.0.0-20200714143123-f3db1bb60aa0
+	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/golangci/golangci-lint v1.27.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
@@ -20,8 +21,9 @@ require (
 	github.com/slack-go/slack v0.6.4
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/zap v1.15.0
-	golang.org/x/net v0.0.0-20200520182314-0ba52f642ac2
-	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
+	golang.org/x/net v0.0.0-20200625001655-4c5254603344
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
+	golang.org/x/tools v0.0.0-20200717024301-6ddee64345a6 // indirect
 	google.golang.org/genproto v0.0.0-20200715011427-11fb19a81f2c // indirect
 	google.golang.org/grpc v1.29.1
 	google.golang.org/protobuf v1.25.0

@@ -115,7 +115,7 @@ const CreateRecordMutationQuery = `mutation CreateRecordMutation ($episodeId: ID
 
 func (c *Client) CreateRecordMutation(ctx context.Context, episodeID string, httpRequestOptions ...client.HTTPRequestOption) (*CreateRecordMutationPayload, error) {
 	vars := map[string]interface{}{
-		"episodeID": episodeID,
+		"episodeId": episodeID,
 	}
 
 	var res CreateRecordMutationPayload
@@ -300,7 +300,7 @@ const UpdateStatusMutationQuery = `mutation UpdateStatusMutation ($state: Status
 func (c *Client) UpdateStatusMutation(ctx context.Context, state StatusState, workID string, httpRequestOptions ...client.HTTPRequestOption) (*UpdateStatusMutationPayload, error) {
 	vars := map[string]interface{}{
 		"state":  state,
-		"workID": workID,
+		"workId": workID,
 	}
 
 	var res UpdateStatusMutationPayload
@@ -320,7 +320,7 @@ const UpdateWorkStatusQuery = `mutation UpdateWorkStatus ($workId: ID!) {
 
 func (c *Client) UpdateWorkStatus(ctx context.Context, workID string, httpRequestOptions ...client.HTTPRequestOption) (*UpdateWorkStatusPayload, error) {
 	vars := map[string]interface{}{
-		"workID": workID,
+		"workId": workID,
 	}
 
 	var res UpdateWorkStatusPayload
