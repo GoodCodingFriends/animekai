@@ -7,6 +7,7 @@ require (
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/golang/protobuf v1.4.2
 	github.com/golangci/golangci-lint v1.27.0
+	github.com/google/go-cmp v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/k0kubun/pp v3.0.1+incompatible

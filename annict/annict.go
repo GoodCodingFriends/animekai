@@ -39,7 +39,6 @@ type Service interface {
 }
 
 type service struct {
-	token  string
 	client *Client
 
 	ogImageFetcher *ogImageFetcher
@@ -47,8 +46,15 @@ type service struct {
 
 func New(token, endpoint string) Service {
 	return &service{
-		token:          token,
-		client:         &Client{client.NewClient(http.DefaultClient, endpoint)},
+		client: &Client{
+			client.NewClient(
+				http.DefaultClient,
+				endpoint,
+				func(r *http.Request) {
+					r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+				},
+			),
+		},
 		ogImageFetcher: newOGImageFetcher(),
 	}
 }
