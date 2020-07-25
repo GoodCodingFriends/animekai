@@ -144,7 +144,7 @@ func (s *service) ListWorks(
 		res := &resource.Work{
 			Id:            int32(n.AnnictID),
 			Title:         n.Title,
-			ReleasedOn:    fmt.Sprintf("%d %s", n.SeasonYear, seasonToKanji[*n.SeasonName]),
+			ReleasedOn:    fmt.Sprintf("%d %s", *n.SeasonYear, seasonToKanji[*n.SeasonName]),
 			EpisodesCount: int32(n.EpisodesCount),
 			Status:        status,
 		}
