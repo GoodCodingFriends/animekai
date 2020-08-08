@@ -50,6 +50,7 @@ func newClientAndRunServer(t *testing.T) *client {
 		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 			t.Errorf("srv.ListenAndServe returns unexpected error: %s", err)
 		}
+		t.Log("server closed")
 	}()
 	t.Cleanup(func() {
 		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
