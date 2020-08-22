@@ -22,14 +22,16 @@ import (
 type commandHandler struct {
 	logger        *zap.Logger
 	signingSecret string
+	webhookURL    string
 
 	annict annict.Service
 }
 
-func NewCommandHandler(logger *zap.Logger, signingSecret string, annictService annict.Service) http.Handler {
+func NewCommandHandler(logger *zap.Logger, signingSecret, webhookURL string, annictService annict.Service) http.Handler {
 	return &commandHandler{
 		logger:        logger,
 		signingSecret: signingSecret,
+		webhookURL:    webhookURL,
 		annict:        annictService,
 	}
 }
@@ -64,47 +66,57 @@ func (h *commandHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sp := strings.Split(cmd.Text, " ")
-	text, err := h.handle(sp)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		h.logger.Warn("failed to process request", zap.Error(err))
-		return
-	}
+	h.handle(sp) // handle runs asynchronously.
 
 	w.Header().Set("Content-Type", "application/json")
-	params := &slack.Msg{ResponseType: slack.ResponseTypeInChannel, Text: strings.TrimSpace(text)}
+	params := &slack.Msg{ResponseType: slack.ResponseTypeInChannel}
 	if err := json.NewEncoder(w).Encode(params); err != nil {
 		h.logger.Warn("failed to encode response body", zap.Error(err))
 	}
 }
 
-func (h *commandHandler) handle(args []string) (string, error) {
-	switch args[0] {
-	case "start":
-		h.logger.Info("start")
-		episodes, err := start(ctxzap.ToContext(context.Background(), h.logger.Named("start")), h.annict)
+func (h *commandHandler) handle(args []string) {
+	go func() {
+		msg := func() string {
+			switch args[0] {
+			case "start":
+				h.logger.Info("start")
+				episodes, err := start(ctxzap.ToContext(context.Background(), h.logger.Named("start")), h.annict)
+				if err != nil {
+					h.logger.Error("failed to call start", zap.Error(err))
+					return ""
+				}
+
+				var text string
+				for _, e := range episodes {
+					text += fmt.Sprintf("- %s %s %s\n", e.WorkTitle, e.NumberText, e.Title)
+				}
+
+				return text
+			case "add":
+				h.logger.Info("add")
+				if len(args) == 1 || args[1] == "-h" || args[1] == "--help" {
+					return "usage: /animekai add https://annict.jp/works/<workID>"
+				}
+				ctx := ctxzap.ToContext(context.Background(), h.logger.Named("add"))
+				if err := add(ctx, h.annict, args[1:]); err != nil {
+					return ""
+				}
+				return ":lgtm-1:"
+			}
+			return ""
+		}()
+
+		err := slack.PostWebhook(
+			h.webhookURL,
+			&slack.WebhookMessage{
+				Text: msg,
+			},
+		)
 		if err != nil {
-			return "", failure.Wrap(err)
+			h.logger.Error("failed to process command", zap.Error(err))
 		}
-
-		var text string
-		for _, e := range episodes {
-			text += fmt.Sprintf("- %s %s %s\n", e.WorkTitle, e.NumberText, e.Title)
-		}
-
-		return text, nil
-	case "add":
-		h.logger.Info("add")
-		if len(args) == 1 || args[1] == "-h" || args[1] == "--help" {
-			return "usage: /animekai add https://annict.jp/works/<workID>", nil
-		}
-		ctx := ctxzap.ToContext(context.Background(), h.logger.Named("add"))
-		if err := add(ctx, h.annict, args[1:]); err != nil {
-			return "", failure.Wrap(err)
-		}
-		return ":lgtm-1:", nil
-	}
-	return "invalid usage", nil
+	}()
 }
 
 func start(ctx context.Context, annictService annict.Service) ([]*resource.Episode, error) {

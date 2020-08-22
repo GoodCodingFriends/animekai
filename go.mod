@@ -17,6 +17,7 @@ require (
 	github.com/mitchellh/go-testing-interface v1.14.1
 	github.com/morikuni/failure v0.12.1
 	github.com/nametake/protoc-gen-gohttp v1.2.0
+	github.com/nlopes/slack v0.6.0
 	github.com/rakyll/statik v0.1.7
 	github.com/rs/cors v1.7.0
 	github.com/slack-go/slack v0.6.4

@@ -72,7 +72,7 @@ func realMain() error { //nolint:funlen
 		}
 	}()
 
-	slackService := slack.NewCommandHandler(logger, cfg.SlackSigningSecret, annictService)
+	slackService := slack.NewCommandHandler(logger, cfg.SlackSigningSecret, cfg.SlackWebhookURL, annictService)
 
 	handler := server.New(
 		logger,

@@ -6,6 +6,7 @@ type Config struct {
 	AnnictToken        string `envconfig:"ANNICT_TOKEN" required:"true"`
 	AnnictEndpoint     string `envconfig:"ANNICT_ENDPOINT" required:"true"`
 	SlackSigningSecret string `envconfig:"SLACK_SIGNING_SECRET" required:"true"`
+	SlackWebhookURL    string `envconfig:"SLACK_WEBHOOK_URL" required:"true"`
 }
 
 type Env string
